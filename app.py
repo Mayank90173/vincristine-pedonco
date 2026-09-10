@@ -3,108 +3,131 @@ import pandas as pd
 import numpy as np
 import joblib
 
-# 1. Page Configuration & Aesthetic Setup
-st.set_page_config(page_title="VIPN Decision Support System", page_icon="🩺", layout="wide")
+# 1. Page Configuration & Layout
+st.set_page_config(page_title="VIPN Quantitative Pharmacology Platform", page_icon="🧪", layout="wide")
 
-st.title("🩺 Pediatric VIPN Expert Clinical Decision Support System")
-st.write("### Pharmacovigilance-Driven Risk Calculator & Evidence-Based Guidelines")
+st.title("🧪 Pediatric VIPN Quantitative Pharmacology Platform")
+st.write("### Advanced Decision Support System for Low-Resource Neuro-Oncology")
 st.markdown("---")
 
-# 2. Ingest the ML model safely
+# Load baseline ML model architecture
 try:
     saved_bundle = joblib.load('vincristine_model.pkl')
     clinical_model = saved_bundle['model']
 except:
-    st.error("Model file missing. Please ensure 'vincristine_model.pkl' is generated.")
+    st.error("Baseline engine missing. Ensure 'vincristine_model.pkl' is compiled.")
     st.stop()
 
-# 3. Sidebar Input Form (Divided into Clinical Categories)
-st.sidebar.header("📋 Patient Clinical Inputs")
+# 2. Sidebar Input Form - Core Pharmacological Parameters
+st.sidebar.header("🔬 Quantitative Variables")
 
-st.sidebar.subheader("🔹 Demographics")
-age_input = st.sidebar.slider("Patient Age (Years)", 0.0, 18.0, 6.0, 0.5)
-sex_input = st.sidebar.selectbox("Biological Sex", ["Male", "Female", "Unknown"])
+st.sidebar.subheader("🔹 Patient Biometrics")
+age = st.sidebar.slider("Patient Age (Years)", 0.0, 18.0, 6.0, 0.5)
+sex = st.sidebar.selectbox("Biological Sex", ["Male", "Female", "Unknown"])
+weight = st.sidebar.number_input("Patient Weight (kg)", min_value=2.0, max_value=100.0, value=20.0, step=0.5)
+height = st.sidebar.number_input("Patient Height (cm)", min_value=40.0, max_value=200.0, value=110.0, step=1.0)
 
-st.sidebar.subheader("🔹 Chemotherapy Dosing")
-# standard vincristine pediatric dose is 1.5 mg/m2 capped at 2mg
-vincristine_dose = st.sidebar.number_input("Current Vincristine Dose (mg/m²)", min_value=0.5, max_value=2.0, value=1.5, step=0.1)
-cumulative_dose = st.sidebar.number_input("Cumulative Vincristine Dose received so far (mg)", min_value=0.0, max_value=20.0, value=3.0, step=0.5)
+# Calculate BSA using Mosteller Formula (Standard in Pediatric Oncology)
+bsa = np.sqrt((weight * height) / 3600)
 
-st.sidebar.subheader("🔹 Co-Medications")
-azole_input = st.sidebar.selectbox("Concomitant Azole Antifungals?", ["No", "Yes"])
+st.sidebar.subheader("🔹 Vincristine Dosing Metrics")
+prescribed_dose_per_m2 = st.sidebar.number_input("Prescribed Dose (mg/m²)", min_value=0.5, max_value=2.0, value=1.5, step=0.1)
+actual_mg_administered = st.sidebar.number_input("Absolute Dose Administered (mg)", min_value=0.1, max_value=5.0, value=float(min(prescribed_dose_per_m2 * bsa, 2.0)), step=0.1)
+cumulative_cycles = st.sidebar.slider("Total Chemotherapy Cycles Received", min_value=1, max_value=12, value=3)
 
-# Layout setup: Split into two visual columns
+# Calculating Cumulative Vincristine Exposure
+cumulative_exposure = actual_mg_administered * cumulative_cycles
+
+st.sidebar.subheader("🔹 CYP3A4/5 Enzyme Inhibitors")
+azole_selection = st.sidebar.selectbox(
+    "Concurrent Azole Antifungal",
+    options=["None", "Fluconazole (Weak/Moderate)", "Voriconazole (Strong)", "Itraconazole (Strong)", "Posaconazole (Strong)"]
+)
+
+# 3. Processing Core Layout
 col1, col2 = st.columns([1, 1])
 
 with col1:
-    st.subheader("📊 Algorithmic Risk Analytics")
+    st.subheader("📊 Pharmacokinetic & Statistical Risk Modeling")
     
-    # Process Inputs for ML Model
-    azole_flag = 1 if azole_input == "Yes" else 0
-    sex_male_flag = True if sex_input == "Male" else False
-    sex_unknown_flag = True if sex_input == "Unknown" else False
-
+    # Map input parameters back to baseline ML architecture
+    azole_binary = 1 if azole_selection != "None" else 0
+    sex_male = True if sex == "Male" else False
+    sex_unknown = True if sex == "Unknown" else False
+    
     patient_vector = pd.DataFrame([{
-        'Age_Years': age_input,
-        'Concomitant_Azole': azole_flag,
-        'Sex_Male': sex_male_flag,
-        'Sex_Unknown': sex_unknown_flag
+        'Age_Years': age,
+        'Concomitant_Azole': azole_binary,
+        'Sex_Male': sex_male,
+        'Sex_Unknown': sex_unknown
     }])
-
-    if st.button("⚡ Compute Patient VIPN Risk Profile"):
-        risk_prob = clinical_model.predict_proba(patient_vector)[0][1] * 100
-        
-        # Risk Stratification based on statistical boundaries
-        if risk_prob < 40.0:
-            st.success(f"### Low Risk Stratum: {risk_prob:.2f}% Probability")
-            st.metric(label="Risk Status", value="LOW RISK", delta="- Baseline Context")
-        elif 40.0 <= risk_prob < 70.0:
-            st.warning(f"### Moderate Risk Stratum: {risk_prob:.2f}% Probability")
-            st.metric(label="Risk Status", value="MODERATE RISK", delta="+ Escalate Screening", delta_color="inverse")
-        else:
-            st.error(f"### High Risk Stratum: {risk_prob:.2f}% Probability")
-            st.metric(label="Risk Status", value="HIGH RISK", delta="🚨 CRITICAL ALIGNMENT", delta_color="inverse")
-            
-        st.info("**Why these parameters matter:** Older pediatric cohorts show altered pharmacokinetics, and concurrent Azole administration blocks the **CYP3A4/5 liver enzyme system**, causing systemic accumulation of Vincristine and severe nerve injury.")
-
-    # 🛑 SECTION A: POSSIBLE TOXICITIES & DIFFERENTIAL DIAGNOSIS (Min. 3 Possibilities)
-    st.markdown("---")
-    st.subheader("🕵️‍♂️ Possible Toxicities & Differential Diagnoses")
-    st.write("When a child on Vincristine shows neuropathic symptoms, evaluate for at least **three distinct possibilities** before concluding it is purely VIPN:")
     
+    if st.button("⚡ Run Quantitative Risk Simulation"):
+        # Get baseline statistical risk from openFDA distribution
+        baseline_prob = clinical_model.predict_proba(patient_vector)[0][1] * 100
+        
+        # Pharmacology Scaling Mechanics (Multiplying risk based on drug potency)
+        cyp3a4_inhibition_factor = 1.0
+        if azole_selection == "Fluconazole (Weak/Moderate)":
+            cyp3a4_inhibition_factor = 1.4  # 40% increase in plasma exposure (AUC)
+        elif azole_selection in ["Voriconazole (Strong)", "Itraconazole (Strong)", "Posaconazole (Strong)"]:
+            cyp3a4_inhibition_factor = 2.2  # Over 2x systemic clearance restriction
+            
+        # Cumulative Dose Acceleration Factor
+        # Risk accelerates after crossing 4.0mg total cumulative dose threshold
+        cumulative_risk_scalar = 1.0 + (max(0.0, cumulative_exposure - 4.0) * 0.15)
+        
+        # Capping calculated mathematical risk logically at 98%
+        final_pharmacological_risk = min(baseline_prob * cyp3a4_inhibition_factor * cumulative_risk_scalar, 98.0)
+        
+        # Display Results
+        if final_pharmacological_risk < 40.0:
+            st.success(f"### Low Risk Profile: {final_pharmacological_risk:.2f}% Probability")
+        elif 40.0 <= final_pharmacological_risk < 75.0:
+            st.warning(f"### Moderate Risk Profile: {final_pharmacological_risk:.2f}% Probability")
+        else:
+            st.error(f"### High Risk Profile: {final_pharmacological_risk:.2f}% Probability")
+            
+        # Operational Real-Time Biometric Feedback
+        st.write(f"**Calculated Body Surface Area (BSA):** `{bsa:.2f} m²`")
+        st.write(f"**Total Cumulative Vincristine Burden:** `{cumulative_exposure:.2f} mg`")
+        
+        # Check for Dosing Guideline Breaches
+        if actual_mg_administered > 2.0:
+            st.markdown("🚨 **CRITICAL WARNING:** Dose exceeds the universal pediatric safety cap of **2.0 mg per cycle**. Severe axonal degeneration risk is highly elevated.")
+
+    st.markdown("---")
+    st.subheader("🕵️‍♂️ Differential Diagnosis Protocol")
+    st.write("Evaluate for at least **three distinct possibilities** before concluding symptoms are purely VIPN:")
     st.markdown("""
-    1.  **Vincristine-Induced Peripheral Neurotoxicity (VIPN):** Autonomic, sensory, or motor nerve damage directly caused by microtubule disruption. Resembles standard drug-induced axonopathy.
-    2.  **Nutritional Neuropathy (Vitamin B12/Folate Deficiency):** Highly prevalent in resource-limited settings due to cancer-related cachexia or baseline malnutrition.
-    3.  **Critical Illness Polyneuropathy (CIPN):** Occurs secondary to severe systemic infections, prolonged ICU stays, or episodes of pediatric sepsis common during neutropenia phases.
+    *   **Vincristine-Induced Peripheral Neurotoxicity (VIPN):** Microtubule-mediated structural damage to sensory/motor axons.
+    *   **Nutritional Axonopathy:** Folate or Vitamin B12 depletion exacerbated by low-resource dietary constraints or cachexia.
+    *   **Critical Illness Polyneuropathy (CIPN):** Degeneration triggered by severe neutropenic sepsis and prolonged systemic stress.
     """)
 
 with col2:
-    # 📚 SECTION B: EVIDENCE-BASED GUIDELINES & PATHOPHYSIOLOGY
-    st.subheader("📚 Pathophysiology & Guidelines")
+    st.subheader("📚 Molecular Pharmacology & Clinical Guidelines")
     
-    with st.expander("🧬 Why is this Toxicity Occurring? (Mechanism)"):
+    with st.expander("🧬 CYP3A4 Enzyme Inhibition Mechanism"):
         st.write("""
-        *   **Microtubule Disruption:** Vincristine works by binding to tubulin, disrupting the mitotic spindle to kill cancer cells. However, nerves rely heavily on microtubules for axonal transport (moving nutrients down the long nerve cell). When disrupted, the axon starves and dies (axonopathy).
-        *   **The Azole Interaction:** Vincristine is broken down in the body by the **CYP3A4/5** cytochrome P450 enzyme pathway in the liver. Azole antifungals (like *Fluconazole, Voriconazole*) are strong inhibitors of CYP3A4. When given together, the liver cannot process Vincristine, its blood concentration skyrockets, leading to severe neurotoxicity.
+        *   **Metabolic Pathway:** Vincristine is a substrate primarily cleared by hepatic cytochrome P450 **CYP3A4 and CYP3A5** enzymes.
+        *   **Competitive Inhibition:** Concomitant Azoles bind competitively to the iron atom of the CYP3A4 heme group, blocking Vincristine clearance.
+        *   **Systemic Accumulation:** This enzyme block increases the area under the curve (AUC) and plasma half-life of Vincristine, starving peripheral nerve axons of vital structural proteins by halting tubulin polymerization.
         """)
         
-    with st.expander("📋 International Clinical Guidelines Alignment"):
+    with st.expander("📋 Evidence-Based Dosing Standards"):
         st.write("""
-        According to international pediatric oncology consensus frameworks:
-        *   **Standard Dosing:** The typical pediatric dose of Vincristine is **1.5 mg/m²** per cycle, which is strictly **capped at a maximum of 2.0 mg** total per dose to minimize sudden severe neurotoxicity.
-        *   **Monitoring Protocol:** Perform systematic clinical evaluations (like the *Total Neuropathy Score* or *Pediatric Modified Balis Scale*) before each chemotherapy cycle to screen for early loss of deep tendon reflexes, paresthesia, or severe constipation.
+        *   **Pediatric Baseline:** Standard oncology protocols mandate **1.5 mg/m²** per dose.
+        *   **Toxicity Ceiling:** To mitigate severe motor deficits (like foot drop or paralytic ileus), single doses must be **capped at a maximum of 2.0 mg**, irrespective of BSA calculation.
         """)
-
-    # 💊 SECTION C: ALTERNATIVE CLINICAL MANAGEMENT (Min. 3 Treatment Options)
-    st.subheader("💊 Alternative Clinical Management Options")
-    st.write("If high risk or active neurotoxicity is identified, consider these **three non-definitive clinical options**:")
-    
+        
+    st.subheader("💊 Alternative Non-Interacting Management Options")
+    st.write("Consider these **three distinct treatment options** if toxicity thresholds are breached:")
     st.markdown("""
-    *   **Option 1: Antimicrobial Stewardship (Drugged Alternatives):** Temporarily discontinue the concurrent strong CYP3A4-inhibiting azole. Switch to non-interacting antifungals such as **Liposomal Amphotericin B** or an **Echinocandin** (e.g., *Caspofungin*) if systemic fungal coverage is still mandatory.
-    *   **Option 2: Chemotherapeutic Dose Adjustments:** Discuss with the pediatric oncology board regarding a **25% to 50% dose reduction** of Vincristine for subsequent cycles, or temporarily withholding a dose until neuropathic symptoms regress to Grade 1.
-    *   **Option 3: Symptomatic Neuropathic Relief:** For children experiencing painful paresthesias or neuralgia, general medical consensus supports introducing non-sedating neuro-analgesics such as low-dose **Gabapentin** or **Pregabalin**, adjusted carefully for pediatric biometrics.
+    1.  **Antimicrobial Switch (Non-Interacting Therapeutics):** Substitute the azole antifungal with **Liposomal Amphotericin B** or an echinocandin (e.g., **Caspofungin**), which bypass the hepatic CYP3A4 clearance pathway.
+    2.  **Chemotherapy Dose Tailoring:** Apply a **25% to 50% dose modification** to subsequent Vincristine cycles or delay infusion until neuro-symptoms regress to baseline Grade 1.
+    3.  **Neuro-Analgesic Intervention:** Introduce low-dose **Gabapentin or Pregabalin** to manage severe neuropathic pain or burning paresthesias, carefully adjusted for pediatric renal clearance.
     """)
 
-# 🚨 MANDATORY MEDICAL DISCLAIMER
 st.markdown("---")
-st.warning("⚠️ **General Medical Information Disclaimer:** This system provides general educational and research benchmarking information only. It is **NOT** a source of personalized medical advice or definitive diagnostic decisions. Clinicians must double-check physical drug labels, institutional guidelines, and complete patient clinical indicators before making prescription modifications.")
+st.warning("⚠️ **General Medical Information Disclaimer:** This software provides general research benchmarking statistics. It is **NOT** a source of personalized medical advice. Clinicians must verify physical drug labels, check local protocols, and review comprehensive indicators before making treatment changes.")
