@@ -1,0 +1,101 @@
+Case_ID,Age,Sex,Weight_kg,Country,Concomitant_Azole,All_Side_Effects,VIPN_Toxicity_Target
+1,3,Male,15,Unknown,0,"febrile neutropenia, hypophagia, pleural effusion",0
+2,1,Female,10.9,Unknown,0,febrile neutropenia,0
+3,6,Male,Unknown,Unknown,0,hypertriglyceridaemia,0
+4,2,Female,Unknown,Unknown,0,"renal failure acute, drug-induced liver injury",0
+5,12,Male,Unknown,Unknown,0,"pneumonia, febrile neutropenia, hypotension, pneumomediastinum, deep vein thrombosis",0
+6,10,Male,Unknown,Unknown,0,"cushingoid, body height below normal, acne, skin papilloma, spinal compression fracture, headache, headache, musculoskeletal stiffness, insomnia, lymphopenia, osteoporosis",0
+7,11,Female,Unknown,Unknown,0,"grand mal convulsion, encephalopathy, temporal lobe epilepsy, hippocampal sclerosis",0
+8,11,Male,Unknown,Unknown,0,"temporal lobe epilepsy, hippocampal sclerosis",0
+9,10,Female,Unknown,Unknown,0,"posterior reversible encephalopathy syndrome, blood pressure increased",0
+10,15,Male,Unknown,Unknown,0,"pancreatitis, parotitis",0
+11,15,Male,61.8,Unknown,0,"hypotension, oral pain, rectal ulcer, oropharyngeal pain",0
+12,10,Female,Unknown,Unknown,0,"posterior reversible encephalopathy syndrome, blood pressure increased, jugular vein thrombosis, intracranial venous sinus thrombosis",0
+13,10,Male,Unknown,Unknown,0,zygomycosis,0
+14,4,Female,19.2,Unknown,0,"bronchiectasis, wheezing",0
+15,6,Male,Unknown,Unknown,0,"drug interaction, hypertriglyceridaemia, pneumonia influenzal, ascites, pseudohyponatraemia, somnolence, cushing^s syndrome, oedema peripheral, headache",0
+16,4,Female,Unknown,Unknown,0,"pneumatosis intestinalis, stomatitis, diarrhoea, abdominal pain, abdominal distension, neutropenia",0
+17,5,Female,Unknown,Unknown,0,"haematotoxicity, haematotoxicity",0
+18,17,Female,Unknown,Unknown,0,"diarrhoea, weight decreased, neuropathy peripheral, febrile neutropenia, pulmonary mass, lymphadenopathy",1
+19,11,Male,Unknown,Unknown,0,nephrogenic systemic fibrosis,0
+20,9,Male,27.5,Unknown,0,"abdominal pain, hemianopia, muscular weakness, agitation, headache, bradycardia, sinus bradycardia, vision blurred, depressed level of consciousness, convulsion, loss of consciousness, posterior reversible encephalopathy syndrome, hypertension, visual impairment, respiratory failure",0
+21,8,Female,28.2,Unknown,0,"anaemia, neutropenia, tachycardia, pyrexia, contusion, decreased appetite, hepatomegaly, platelet count decreased, hypotension, bacterial infection",0
+22,2,Female,11.8,Unknown,0,"pneumatosis intestinalis, lymphopenia, malnutrition, gastrointestinal infection, rhinovirus infection, viral infection, malaise, pyrexia, diarrhoea, vomiting, failure to thrive, abdominal distension, herpes simplex, metabolic acidosis, immunodeficiency",0
+23,7,Male,7.62,Unknown,0,"dermatitis diaper, klebsiella infection, clostridium difficile colitis",0
+24,2,Female,Unknown,Unknown,0,t-lymphocyte count decreased,0
+25,1,Female,10.3,Unknown,0,"cognitive disorder, sinus tachycardia, mental disorder",0
+26,1,Female,8.82,Unknown,0,"febrile neutropenia, enterobacter infection, sepsis, diarrhoea",0
+27,9,Male,45,Unknown,0,"osteosarcoma, disease progression, renal impairment, toxicity to various agents",0
+28,5,Male,Unknown,Unknown,0,"acute lymphocytic leukaemia, sepsis",0
+29,11,Male,Unknown,Unknown,0,"lethargy, venoocclusive liver disease, disseminated intravascular coagulation, respiratory distress, product use issue, hyperammonaemia",0
+30,6,Female,22.8,Unknown,0,hypersensitivity,0
+31,3,Male,15.5,Unknown,0,hypersensitivity,0
+32,3,Female,14.5,Unknown,0,"fatigue, headache, urine output decreased, hypophagia, vomiting, nausea, asthenia, pyrexia, cardiac arrest, dizziness, abdominal pain, pulse absent, apnoea",0
+33,13,Female,58.5,Unknown,0,hypersensitivity,0
+34,18,Male,56.1,Unknown,0,"anaphylactic reaction, chest discomfort, nausea, sinus tachycardia, anxiety, blood pressure increased",0
+35,17,Male,Unknown,Unknown,0,"haemolytic anaemia, jaundice, haemoglobin decreased, blood bilirubin unconjugated increased, hyperglycaemia",0
+36,11,Female,Unknown,Unknown,0,"packed red blood cell transfusion, nausea, vomiting, weight decreased, diarrhoea",0
+37,7,Male,Unknown,Unknown,0,"packed red blood cell transfusion, diarrhoea, epistaxis, nausea, vomiting, therapy responder",0
+38,17,Female,Unknown,Unknown,0,"platelet transfusion, packed red blood cell transfusion, febrile neutropenia, diarrhoea, weight decreased, neuropathy peripheral",1
+39,8,Male,Unknown,Unknown,0,"platelet transfusion, packed red blood cell transfusion, hypertension, diarrhoea",0
+40,6,Female,Unknown,Unknown,0,posterior reversible encephalopathy syndrome,0
+41,17,Male,Unknown,Unknown,0,haemolytic anaemia,0
+42,17,Male,Unknown,Unknown,0,"haemolytic anaemia, hyperglycaemia",0
+43,17,Male,105,Unknown,0,"tumour lysis syndrome, off label use",0
+44,3,Female,13.4,Unknown,0,"abscess bacterial, anaemia, sinus tachycardia, constipation, intestinal perforation",0
+45,12,Male,25,Unknown,0,disease progression,0
+46,4,Male,10.2,Unknown,0,disease progression,0
+47,3,Female,11,Unknown,0,disease progression,0
+48,3,Female,7.8,Unknown,0,disease progression,0
+49,13,Male,57,Unknown,0,"sepsis, tachycardia, anaemia, febrile neutropenia, leukopenia, abdominal pain, pyrexia",0
+50,3,Male,15.33,Unknown,0,"abdominal pain, nausea, vomiting, ileus, impaired gastric emptying, tachycardia, tachypnoea, hypoxia, face oedema, pyrexia, ascites, pleural effusion, nephropathy, clostridium test positive, sepsis, disseminated intravascular coagulation, enterocolitis infectious, capillary leak syndrome",0
+51,6,Female,14.4,Unknown,0,"stomatitis, streptococcal infection, decreased appetite, hypoxia, nausea",0
+52,16,Male,Unknown,Unknown,0,"diabetic ketoacidosis, hyperglycaemia, acidosis, ketonuria, blood bicarbonate decreased, hyperamylasaemia, hyperlipasaemia, pancreatitis acute, decreased appetite, vomiting, nausea, blood urea increased, blood osmolarity increased, lipase increased",0
+53,6,Female,Unknown,Unknown,0,"posterior reversible encephalopathy syndrome, convulsion, myoclonus, toxicity to various agents",0
+54,12,Female,49.8,Unknown,0,"jaundice, hepatomegaly, alanine aminotransferase increased",0
+55,17,Male,Unknown,Unknown,0,"haemolytic anaemia, hyperglycaemia",0
+56,16,Male,Unknown,Unknown,0,"pancreatitis acute, diabetic ketoacidosis",0
+57,16,Male,Unknown,Unknown,0,"pancreatitis, diabetic ketoacidosis, mallory-weiss syndrome",0
+58,16,Male,61.7,Unknown,0,hypophosphataemia,0
+59,17,Female,Unknown,Unknown,0,"leukaemia recurrent, neutrophil count decreased, haematotoxicity, blast cells present, bronchopulmonary aspergillosis, bone marrow failure, pancreatitis acute, pneumonia fungal",0
+60,4,Female,Unknown,Unknown,0,"varicella post vaccine, multiple organ dysfunction syndrome, vaccination error",0
+61,12,Female,Unknown,Unknown,0,"cerebrovascular accident, thrombotic stroke",0
+62,8,Male,Unknown,Unknown,0,cerebral haemangioma,0
+63,11,Female,Unknown,Unknown,0,cerebral haemangioma,0
+64,18,Male,Unknown,Unknown,0,"disease progression, leukopenia, alanine aminotransferase increased",0
+65,13,Female,Unknown,Unknown,0,"pancreatitis, hyperglycaemia, bone marrow failure, hepatomegaly",0
+66,16,Male,Unknown,Unknown,0,"diabetic ketoacidosis, abdominal pain, nausea, vomiting, decreased appetite, haematemesis, hyperamylasaemia, mallory-weiss syndrome",0
+67,8,Female,Unknown,Unknown,0,porphyria non-acute,0
+68,18,Female,81.9,Unknown,0,"hypotension, haemodialysis, hepatic encephalopathy, disseminated intravascular coagulation, atrioventricular block first degree, atrioventricular block complete, cardiac arrest",0
+69,16,Male,Unknown,Unknown,0,"pancreatitis acute, diabetic ketoacidosis, mallory-weiss syndrome, haematemesis",0
+70,17,Male,Unknown,Unknown,0,haemolytic anaemia,0
+71,4,Male,16.6,Unknown,0,encephalopathy,0
+72,13,Male,Unknown,Unknown,0,"atelectasis, pneumomediastinum, bone marrow failure, respiratory tract infection fungal",0
+73,3,Male,Unknown,Unknown,0,sepsis,0
+74,16,Male,Unknown,Unknown,0,"diabetic ketoacidosis, pancreatitis acute, mallory-weiss syndrome",0
+75,9,Male,Unknown,Unknown,0,"ataxia, dysarthria, viith nerve paralysis",0
+76,8,Male,Unknown,Unknown,0,"hypoxia, respiratory failure, hypotension, pseudomonas test positive, blood culture positive, influenza a virus test positive, sepsis, pneumatosis, ischaemia, ascites, cardiotoxicity, white blood cell count decreased, hypernatraemia, neutrophil count decreased",0
+77,8,Female,Unknown,Unknown,0,"cerebral haemangioma, haemorrhage, headache, vision blurred",0
+78,6,Male,Unknown,Unknown,0,"infection reactivation, strongyloidiasis",0
+79,4,Male,16,Unknown,0,"parvovirus infection, off label use, hepatocellular injury, encephalopathy",0
+80,14,Male,73.6,Unknown,0,"hordeolum, conjunctivitis, staphylococcus test positive, cellulitis",0
+81,13,Female,53.9,Unknown,0,"duodenal ulcer perforation, apnoea, convulsion, hypoxia",0
+82,12,Male,Unknown,Unknown,0,"respiratory disorder, drug resistance, kaposi^s sarcoma, malignant neoplasm progression",0
+83,5,Male,Unknown,Unknown,0,"sepsis, t-cell type acute leukaemia",0
+84,5,Male,Unknown,Unknown,0,"sepsis, t-cell type acute leukaemia",0
+85,4,Male,16.6,Unknown,0,"rhinitis, cough, tremor, encephalopathy, gait disturbance",1
+86,17,Male,Unknown,Unknown,0,"death, rhabdomyosarcoma, metastases to pituitary gland, malignant neoplasm progression",0
+87,6,Male,29.8,Unknown,0,"tachycardia, hepatic enzyme increased",0
+88,5,Male,Unknown,Unknown,0,"strongyloidiasis, cytomegalovirus test positive, blood creatinine increased, pulmonary fibrosis, anaemia, hypotension, infection reactivation",0
+89,5,Male,Unknown,Unknown,0,"sepsis, t-cell type acute leukaemia",0
+90,1,Male,10.3,Unknown,0,"endocarditis, blood bilirubin increased, atelectasis, renal failure acute, device related infection, ascites, blood creatinine increased, pyrexia, hypoalbuminaemia, hypocalcaemia, hypoglycaemia, hypophosphataemia, hypotension, hypokalaemia, neutropenia, respiratory failure, cerebrovascular accident, embolism",0
+91,16,Female,Unknown,Unknown,0,"critical illness polyneuropathy, sepsis, bacillus test positive, febrile neutropenia, disorientation, meningism, csf protein increased, csf cell count increased, brain abscess, dysstasia, gait disturbance",1
+92,16,Female,Unknown,Unknown,0,"haematotoxicity, febrile neutropenia, maternal exposure before pregnancy",0
+93,14,Female,64.7,Unknown,0,"urosepsis, bacteraemia, febrile neutropenia, dyspnoea, malaise, cough, heart rate increased, hypotension, wheezing, crepitations, bradycardia, aspergillus infection, influenza b virus test positive",0
+94,12,Male,Unknown,Unknown,0,"respiratory disorder, neuropathy peripheral",1
+95,12,Male,Unknown,Unknown,0,"kaposi^s sarcoma, immune reconstitution inflammatory syndrome, respiratory disorder, neuropathy peripheral",1
+96,1,Female,11.65,Unknown,0,febrile neutropenia,0
+97,1,Male,8.9,Unknown,0,sepsis,0
+98,3,Female,15.5,Unknown,0,"intestinal perforation, abdominal abscess, anaemia, sinus tachycardia, constipation",0
+99,16,Female,Unknown,Unknown,0,"acute lymphocytic leukaemia, interstitial lung disease",0
+100,5,Male,Unknown,Unknown,0,sepsis,0
