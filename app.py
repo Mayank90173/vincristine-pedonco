@@ -2,42 +2,46 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
+import os
 
-# 1. Page Configuration and Medical Header Setup
+# 1. Page Configuration (Must be the very first Streamlit command)
 st.set_page_config(page_title="VIPN Clinical Predictor", page_icon="🩺", layout="centered")
 
 st.title("🩺 Vincristine-Induced Neurotoxicity Predictor")
 st.write("### Low-Resource Setting Bedside Risk Calculator")
 st.markdown("---")
 
-st.write("This interactive clinical decision tool estimates the real-world probability of **Vincristine-Induced Peripheral Neurotoxicity (VIPN)** in pediatric oncology patients using readily available bedside demographics.")
+st.write("This interactive clinical decision tool estimates the real-world probability of **Vincristine-Induced Peripheral Neurotoxicity (VIPN)**.")
 
-# 2. Safe Model Ingestion Pipeline
+# 2. Check if model file exists to prevent white-screen crashes
+model_filename = 'vincristine_model.pkl'
+
+if not os.path.exists(model_filename):
+    st.error(f"⚠️ Critical Error: '{model_filename}' not found in the current directory! Please run the last cell of your Jupyter Notebook to generate this file first.")
+    st.stop()
+
+# 3. Load Model safely
 @st.cache_resource
 def load_predictive_engine():
-    return joblib.load('vincristine_model.pkl')
+    return joblib.load(model_filename)
 
 try:
     saved_bundle = load_predictive_engine()
     clinical_model = saved_bundle['model']
-    expected_features = saved_bundle['features']
 except Exception as e:
-    st.error("⚠️ System Failure: Could not ingest the predictive engine. Please verify that 'vincristine_model.pkl' is present in the workspace.")
+    st.error(f"⚠️ System Failure: Could not load the model file. Error details: {e}")
     st.stop()
 
-# 3. Patient Clinical Input Sidebar Form
+# 4. Sidebar Inputs
 st.sidebar.header("📋 Patient Bedside Parameters")
-
 age_input = st.sidebar.slider("Patient Age (Years)", min_value=0.0, max_value=18.0, value=6.0, step=0.5)
 sex_input = st.sidebar.selectbox("Biological Sex", options=["Male", "Female", "Unknown"])
-azole_input = st.sidebar.selectbox("Concomitant Azole Antifungals? (e.g., Fluconazole)", options=["No", "Yes"])
+azole_input = st.sidebar.selectbox("Concomitant Azole Antifungals?", options=["No", "Yes"])
 
-# Mapping interactive input choices into machine learning format
 azole_flag = 1 if azole_input == "Yes" else 0
 sex_male_flag = True if sex_input == "Male" else False
 sex_unknown_flag = True if sex_input == "Unknown" else False
 
-# Packaging inputs into a structured dataframe matching the exact training columns
 patient_vector = pd.DataFrame([{
     'Age_Years': age_input,
     'Concomitant_Azole': azole_flag,
@@ -45,24 +49,26 @@ patient_vector = pd.DataFrame([{
     'Sex_Unknown': sex_unknown_flag
 }])
 
-# 4. Prediction Execution and Risk Stratification
+# 5. Prediction Execution
 st.subheader("📊 Algorithmic Risk Profile Assessment")
 
 if st.button("⚡ Compute Patient VIPN Risk Score"):
-    # Calculate the continuous probability score using the baseline logistic coefficients
-    risk_probabilities = clinical_model.predict_proba(patient_vector)[0]
-    vipn_probability = risk_probabilities[1] * 100  # Extract target event percentage
-    
-    # Stratifying safety bounds for resource-limited clinical action paths
-    if vipn_probability < 40.0:
-        st.success(f"### Low Risk Stratum: {vipn_probability:.2f}% Probability")
-        st.info("💡 **Clinical Recommendation:** Maintain standard protocol surveillance and routinely evaluate deep tendon reflex markers according to standard institutional oncology workflows.")
-    elif 40.0 <= vipn_probability < 70.0:
-        st.warning(f"### Moderate Risk Stratum: {vipn_probability:.2f}% Probability")
-        st.info("💡 **Clinical Recommendation:** Escalate monitoring frequency. Conduct close clinical screening for early fine-motor deficits, sensory paresthesia, or foot drop prior to subsequent cycles.")
-    else:
-        st.error(f"### High Risk Stratum: {vipn_probability:.2f}% Probability")
-        st.info("💡 **Clinical Recommendation:** High toxicity likelihood flagged. Alert the pediatric oncology board to discuss potential chemotherapeutic dosage modulations, strict risk-benefit reviews, or alternative antimicrobial regimens to replace strong CYP3A4 inhibitors like azole antifungals.")
+    try:
+        risk_probabilities = clinical_model.predict_proba(patient_vector)[0]
+        # Extraction of the probability of class 1 (Toxicity)
+        vipn_probability = risk_probabilities[1] * 100 
+        
+        if vipn_probability < 40.0:
+            st.success(f"### Low Risk Stratum: {vipn_probability:.2f}% Probability")
+            st.info("💡 Standard monitoring recommended.")
+        elif 40.0 <= vipn_probability < 70.0:
+            st.warning(f"### Moderate Risk Stratum: {vipn_probability:.2f}% Probability")
+            st.info("💡 Escalate surveillance frequency.")
+        else:
+            st.error(f"### High Risk Stratum: {vipn_probability:.2f}% Probability")
+            st.info("💡 High toxicity likelihood flagged. Alert clinical board.")
+    except Exception as e:
+        st.error(f"Calculation Error: {e}")
 
 st.markdown("---")
-st.caption("⚠️ **Global Health Research Disclaimer:** This platform serves as an open-source clinical research prototype designed exclusively for low-resource educational benchmarking and architectural validation. It does NOT constitute an approved diagnostic system and must never bypass the independent direct judgment of qualified medical practitioners.")
+st.caption("⚠️ **Research Disclaimer:** Open-source medical research prototype.")
