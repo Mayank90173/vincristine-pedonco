@@ -120,14 +120,13 @@ with col2:
         final_pharmacological_risk = min(baseline_prob * cyp3a4_inhibition_factor * cumulative_risk_scalar * omic_modifier, 99.5)
         
         # Calculate dynamic clinical protocol dose advice
-        # 1. Base dose calculation
         guideline_dose = calculated_absolute_dose
         
-        # 2. Apply DDI reduction factors based on CPIC/DPWG models
+        # Apply DDI reduction factors based on CPIC/DPWG models
         if azole_selection in ["Voriconazole (Strong)", "Itraconazole (Strong)", "Posaconazole (Strong)"]:
             guideline_dose = guideline_dose * 0.50  # Apply empiric 50% safety attenuation
 
-        # 3. Apply Hepatic Adjustment (Bilirubin rules based on standard pediatric protocols)
+        # Apply Hepatic Adjustment (Bilirubin rules based on standard pediatric protocols)
         hepatic_alert = "Normal Clearances"
         if bilirubin > 3.0:
             guideline_dose = guideline_dose * 0.25 
@@ -136,10 +135,10 @@ with col2:
             guideline_dose = guideline_dose * 0.50 
             hepatic_alert = "Bilirubin 1.5 - 3.0 mg/dL: Apply 50% Dose Reduction [Standard Clinical Protocol]"
             
-        # 4. Apply Neuro-Grading Adjustments
+        # Apply Neuro-Grading Adjustments
         guideline_dose = guideline_dose * grade_modifier
         
-        # 5. Enforce Safe Cap
+        # Enforce Safe Cap
         if guideline_dose > 2.0:
             guideline_dose = 2.0
             
