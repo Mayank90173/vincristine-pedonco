@@ -109,7 +109,7 @@ with col2:
             ddi_class = "Category C (Monitor Therapy)"
         elif azole_selection in ["Voriconazole (Strong)", "Itraconazole (Strong)", "Posaconazole (Strong)"]:
             cyp3a4_inhibition_factor = 2.5  
-            ddi_class = f"Category X / D (Avoid Combination / Modify Therapy) [Lexicomp / Micromedex Classification]"
+            ddi_class = "Category X / D (Avoid Combination / Modify Therapy) [Lexicomp / Micromedex Classification]"
             
         cumulative_risk_scalar = 1.0 + (max(0.0, cumulative_exposure - 4.0) * 0.20)
         
@@ -175,7 +175,6 @@ with col2:
         if cep72_genotype == "TT (Wild Type)":
             st.info(f"💡 **Biomarker Penetrance Note:** Although patient possesses the protective **CEP72 TT (Wild Type)** variant, systemic exposure kinetics are still structurally compromised due to the zero-clearance **CYP3A5 \*3/\*3** state combined with strong chemical enzyme inhibition via **{azole_selection}**.")
 
-        # Display Core Guidance Block (As requested by Neuro-Oncologists)
-        st.markdown(f"""
-        *   **Standard Computed Dose (1.5 mg/m² base):** `{calculated_absolute_dose:.2f} mg`
-        *   **Recommended Adjusted Safe Dose:** `{guide_dose:.2f} mg` *[Based on CPIC / DPWG Guidelines & Phenotypic Grade Adjustments]*
+        # Fixed structural interpolation conflict
+        st.markdown("**Guideline Dosage Analytics Overview:**")
+        st.write(f"- **Standard Computed Dose (1.5 mg/m² base):** `{calculated_absolute_dose:.2f} mg`")
