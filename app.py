@@ -14,13 +14,11 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Custom Institutional styling rules
 st.markdown("""
     <style>
     .main-title { font-family: 'Helvetica Neue', Arial, sans-serif; color: #1e3d59; font-weight: 700; margin-bottom: 5px; }
     .sub-title { font-family: 'Arial', sans-serif; color: #17b978; font-weight: 500; font-size: 1.25rem; margin-bottom: 25px; }
-    .metric-card { background-color: #ffffff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 6px solid #1e3d59; margin-bottom: 20px; }
-    .critical-card { background-color: #ffffff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 6px solid #ff4b4b; margin-bottom: 20px; }
-    .report-box { background-color: #f8f9fa; padding: 20px; border-radius: 6px; border: 1px solid #e1e4e6; font-family: 'Courier New', Courier, monospace; font-size: 13px; line-height: 1.5; color: #2b2b2b; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -35,6 +33,20 @@ if 'patient_audit_log' not in st.session_state:
         'CYP3A5_Status', 'CEP72_Status', 'CTCAE_Grade', 'Standard_Dose_mg', 
         'Guideline_Dose_mg', 'Administered_Dose_mg', 'Toxicity_Risk_Pct', 'Override_Justification'
     ])
+
+# Initialize processing triggers to enforce persistent UI states
+if 'simulation_executed' not in st.session_state:
+    st.session_state['simulation_executed'] = False
+if 'final_risk' not in st.session_state:
+    st.session_state['final_risk'] = 0.0
+if 'guideline_dose_val' not in st.session_state:
+    st.session_state['guideline_dose_val'] = 0.0
+if 'hepatic_alert_str' not in st.session_state:
+    st.session_state['hepatic_alert_str'] = ""
+if 'ddi_class_str' not in st.session_state:
+    st.session_state['ddi_class_str'] = ""
+if 'full_report_text' not in st.session_state:
+    st.session_state['full_report_text'] = ""
 
 # ==============================================================================
 # 2. SIDEBAR PARAMETER INPUT INTERFACE (DEMOGRAPHICS & PGx BIOMARKERS)
@@ -80,7 +92,6 @@ with col1:
         crcl = st.number_input("Creatinine Clearance / CrCl (mL/min/1.73m²)", min_value=5.0, max_value=200.0, value=134.0, step=0.5)
     
     with st.expander("👟 VIPN Phenotypic Checklist (CTCAE v5.0 Metrics)", expanded=True):
-        st.info("Check observed toxic manifestation profiles during examination:")
         tox_reflex = st.checkbox("Loss of Deep Tendon Reflexes (DTR) / Achilles Hyporeflexia", value=True)
         tox_footdrop = st.checkbox("Objective Motor Weakness / Early Foot Drop / Gait Disturbances", value=True)
         tox_pain = st.checkbox("Severe burning paresthesia / Distal neuropathic pain clusters", value=False)
@@ -98,7 +109,7 @@ with col1:
         clinical_grade = "Grade 2 (Moderate Pain / Altered Functional Gait)"
         grade_modifier = 0.50  
     else:
-        clinical_grade = "Grade 3/4 (Severe Deficit / Complete Hold Action Required)"
+        clinical_grade = "Grade 3/4 (Severe Deficit / Hold Therapy Required)"
         grade_modifier = 0.00  
 
     st.warning(f"**Phenotypic Target Status:** `{clinical_grade}`")
@@ -126,7 +137,7 @@ with col1:
     )
 
 # ==============================================================================
-# 4. QUANTITATIVE PHARMACOLOGY SIMULATION & DYNAMIC RESPONSE SYSTEM
+# 4. QUANTITATIVE PHARMACOLOGY SIMULATION & PERSISTENT RENDER
 # ==============================================================================
 with col2:
     st.markdown("### 📊 5. Multi-Omic & Pharmacological Risk Simulation")
@@ -137,41 +148,47 @@ with col2:
         if is_capped and (not override_reason or override_reason == "N/A"):
             st.error("❌ **Execution Blocked:** Manual override justification string required.")
         else:
-            with st.spinner("Processing pharmacokinetic clearance constants..."):
-                # Pharmacokinetic/Pharmacodynamic Core Math Core
-                base_prob = 12.5  
-                age_factor = 2.2 if age > 9.5 else 1.0
-                prob_calc = base_prob * age_factor
+            # Mathematical Processing Architecture calculations
+            base_prob = 12.5  
+            age_factor = 2.2 if age > 9.5 else 1.0
+            prob_calc = base_prob * age_factor
+            
+            cyp3a4_inhibition = 1.0
+            ddi_class = "Category A: No Active DDI Mapped"
+            if "Fluconazole" in azole_selection:
+                cyp3a4_inhibition = 1.45
+                ddi_class = "Category C: Monitor Chemotherapy Safety"
+            elif azole_selection in ["Voriconazole (Strong CYP3A4 Inhibitor)", "Itraconazole (Strong CYP3A4 Inhibitor)", "Posaconazole (Strong CYP3A4 Inhibitor)"]:
+                cyp3a4_inhibition = 2.80
+                ddi_class = "Category X/D: Avoid Combination"
+            
+            cumulative_scalar = 1.0 + (max(0.0, cumulative_exposure - 3.5) * 0.18)
+            
+            omic_modifier = 1.0
+            if "Poor Metabolizer" in cyp3a5_genotype: omic_modifier += 0.40
+            if "CC" in cep72_genotype: omic_modifier += 0.60
+            elif "CT" in cep72_genotype: omic_modifier += 0.25
+            
+            st.session_state['final_risk'] = min(prob_calc * cyp3a4_inhibition * cumulative_scalar * omic_modifier, 99.7)
+            
+            # Guideline Adjustments Engine Calculations
+            g_dose = calculated_absolute_dose
+            if "Fluconazole" not in azole_selection and azole_selection != "None":
+                g_dose = g_dose * 0.50
+            
+            st.session_state['hepatic_alert_str'] = "Unadjusted (Normal Hepatic Metrics)"
+            if bilirubin > 3.0:
+                g_dose = g_dose * 0.25
+                st.session_state['hepatic_alert_str'] = "Bilirubin > 3.0 mg/dL: Apply 75% Dose Reduction [NCCN Pathway]"
+            elif bilirubin > 1.5:
+                g_dose = g_dose * 0.50
+                st.session_state['hepatic_alert_str'] = "Bilirubin 1.5 - 3.0 mg/dL: Apply 50% Dose Reduction [NCCN Pathway]"
+            
+            g_dose = g_dose * grade_modifier
+            if g_dose > 2.0:
+                g_dose = 2.0
                 
-                cyp3a4_inhibition = 1.0
-                ddi_class = "Category A: No Active DDI Mapped"
-                if "Fluconazole" in azole_selection:
-                    cyp3a4_inhibition = 1.45
-                    ddi_class = "Category C: Monitor Chemotherapy Safety"
-                elif azole_selection in ["Voriconazole (Strong CYP3A4 Inhibitor)", "Itraconazole (Strong CYP3A4 Inhibitor)", "Posaconazole (Strong CYP3A4 Inhibitor)"]:
-                    cyp3a4_inhibition = 2.80
-                    ddi_class = "Category X/D: Avoid Combination"
-                
-                cumulative_scalar = 1.0 + (max(0.0, cumulative_exposure - 3.5) * 0.18)
-                
-                omic_modifier = 1.0
-                if "Poor Metabolizer" in cyp3a5_genotype: omic_modifier += 0.40
-                if "CC" in cep72_genotype: omic_modifier += 0.60
-                elif "CT" in cep72_genotype: omic_modifier += 0.25
-                
-                final_toxicity_risk = min(prob_calc * cyp3a4_inhibition * cumulative_scalar * omic_modifier, 99.7)
-                
-                # Guideline Adjustments Computation Engine (NCCN/CPIC models)
-                guideline_dose = calculated_absolute_dose
-                if "Fluconazole" not in azole_selection and azole_selection != "None":
-                    guideline_dose = guideline_dose * 0.50 # Attenuation for Strong inhibitors
-                
-                hepatic_flag = "Unadjusted (Normal Hepatic Metrics)"
-                if bilirubin > 3.0:
-                    guideline_dose = guideline_dose * 0.25
-                    hepatic_flag = "Bilirubin > 3.0 mg/dL: Apply 75% Dose Reduction [NCCN Pathway]"
-                elif bilirubin > 1.5:
-                    guideline_dose = guideline_dose * 0.50
-                    hepatic_flag = "Bilirubin 1.5 - 3.0 mg/dL: Apply 50% Dose Reduction [NCCN Pathway]"
-                
-                guideline_dose = guideline_dose * grade_modifier
+            st.session_state['guideline_dose_val'] = g_dose
+            st.session_state['ddi_class_str'] = ddi_class
+            st.session_state['simulation_executed'] = True
+            
