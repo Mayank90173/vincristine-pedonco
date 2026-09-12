@@ -14,7 +14,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom Institutional CSS styling for a Clinical Environment
 st.markdown("""
     <style>
     .reportview-container { background: #f5f7f8; }
@@ -28,8 +27,6 @@ st.markdown("""
 st.markdown('<h1 class="main-title">🧪 Pediatric VIPN Quantitative Pharmacology & Multi-Omics Platform</h1>', unsafe_allow_html=True)
 st.markdown('<p class="sub-title">Advanced Bench-to-Bedside Decision Support Engine for Low-Resource Precision Neuro-Oncology</p>', unsafe_allow_html=True)
 st.markdown("---")
-
-st.info("ℹ️ **Deterministic Core Engine V2.1:** Utilizing standard Mosteller body parameters, real-time CPIC/DPWG dynamic drug clearance metrics, and phenotypic CTCAE v5.0 inputs without external diagnostic dependency loops.")
 
 # Initialize Session State Audit Ledger Database if not present
 if 'patient_audit_log' not in st.session_state:
@@ -54,7 +51,6 @@ bsa = math.sqrt((weight * height) / 3600.0)
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 🧬 2. Multi-Omic & Pharmacogenomic Panel")
-st.sidebar.caption("Low-resource proxies or direct molecular profiling variants")
 cyp3a5_genotype = st.sidebar.selectbox(
     "CYP3A5 Genotype Status (Core Clearance)", 
     ["Poor Metabolizer (*3/*3) - Elevated Exposure Risk", 
@@ -67,7 +63,7 @@ cep72_genotype = st.sidebar.selectbox(
     ["CC (High Pharmacodynamic Risk)", 
      "CT (Moderate Vulnerability)", 
      "TT (Wild Type / Standard Baseline)", 
-     "Unknown / Genomic Profile Not Available"]
+     "Unknown"]
 )
 
 # ==============================================================================
@@ -79,12 +75,11 @@ with col1:
     st.markdown("### 📋 3. Real-World Clinical Labs & Phenotypic Neuro-Grading")
     
     with st.expander("🩸 Hepatic & Renal Metabolic Profiles", expanded=True):
-        bilirubin = st.number_input("Total Serum Bilirubin (mg/dL)", min_value=0.1, max_value=15.0, value=0.7, step=0.1, help="Standard pediatric safety cap trigger above 1.5 mg/dL")
+        bilirubin = st.number_input("Total Serum Bilirubin (mg/dL)", min_value=0.1, max_value=15.0, value=0.7, step=0.1)
         alt_ast = st.number_input("Serum ALT / AST Transaminases (U/L)", min_value=5, max_value=800, value=38, step=1)
         crcl = st.number_input("Creatinine Clearance / CrCl (mL/min/1.73m²)", min_value=5.0, max_value=180.0, value=98.5, step=0.5)
     
-    with st.expander("👟 VIPN Phenotypic Sensation Checklist (CTCAE v5.0 Metrics)", expanded=True):
-        st.caption("Select observed toxic manifestation loops during physical examination:")
+    with st.expander("👟 VIPN Phenotypic Checklist (CTCAE v5.0 Metrics)", expanded=True):
         tox_reflex = st.checkbox("Loss of Deep Tendon Reflexes (DTR) / Achilles Hyporeflexia")
         tox_footdrop = st.checkbox("Objective Motor Weakness / Early Foot Drop / Gait Disturbances")
         tox_pain = st.checkbox("Severe burning paresthesia / Distal neuropathic pain clusters")
@@ -96,40 +91,32 @@ with col1:
         clinical_grade = "Grade 0 (No Manifested Neurotoxicity)"
         grade_modifier = 1.0
     elif active_symptoms == 1:
-        clinical_grade = "Grade 1 (Mild Paresthesia / Reflex Loss Only - No Loss of Function)"
+        clinical_grade = "Grade 1 (Mild Paresthesia / Reflex Loss Only)"
         grade_modifier = 1.0
     elif active_symptoms == 2:
-        clinical_grade = "Grade 2 (Moderate Pain / Altered Gait / Functional Interference)"
-        grade_modifier = 0.50  # 50% Dose Reduction Mandatory across pediatric models
+        clinical_grade = "Grade 2 (Moderate Pain / Altered Gait)"
+        grade_modifier = 0.50  
     else:
-        clinical_grade = "Grade 3/4 (Severe Functional Deficit / Paralytic Ileus / Drop Foot)"
-        grade_modifier = 0.00  # Strict Chemotherapy Clinical Hold Engine Triggered
+        clinical_grade = "Grade 3/4 (Severe Functional Deficit / Hold Therapy)"
+        grade_modifier = 0.00  
 
-    if grade_modifier == 1.0:
-        st.success(f"**Phenotypic Target:** `{clinical_grade}`")
-    elif grade_modifier == 0.5:
-        st.warning(f"**Phenotypic Action Required:** `{clinical_grade}` → 50% Attenuation Active.")
-    else:
-        st.error(f"**🛑 CRITICAL HOLD ACTION:** `{clinical_grade}` → Immediate clinical suspension of micro-tubule inhibitors recommended.")
+    st.warning(f"**Phenotypic Target Status:** `{clinical_grade}`")
 
     st.markdown("---")
     st.markdown("### 💊 4. Chemotherapy Administration Profiles")
     prescribed_dose_per_m2 = st.number_input("Standard Prescribed Base Protocol Dose (mg/m²)", min_value=0.1, max_value=2.5, value=1.5, step=0.1)
     
-    # Calculate baseline un-adjusted absolute dose
     calculated_absolute_dose = prescribed_dose_per_m2 * bsa
-    
     actual_mg_administered = st.number_input("Target Absolute Dose to Administer (mg)", min_value=0.01, max_value=6.0, value=float(round(calculated_absolute_dose, 2)), step=0.01)
     cumulative_cycles = st.slider("Total Cumulative Treatment Cycles Received", min_value=1, max_value=24, value=4)
     cumulative_exposure = actual_mg_administered * cumulative_cycles
 
-    # Strict Pediatric 2.0mg Absolute Cap Enforcement Alert Logic
     override_reason = "N/A"
     is_capped = False
     if actual_mg_administered > 2.0:
         is_capped = True
-        st.error("🚨 ⚠️ **CRITICAL CAP BREACH:** Single Vincristine dose exceeds the mandatory 2.0 mg absolute safety ceiling for pediatric patients!")
-        override_reason = st.text_input("🛑 **MANDATORY DOCUMENTATION:** Enter Explicit Clinical Justification / Manual Override Reason to continue:")
+        st.error("🚨 ⚠️ **CRITICAL CAP BREACH:** Single Vincristine dose exceeds the mandatory 2.0 mg absolute safety ceiling!")
+        override_reason = st.text_input("🛑 **MANDATORY DOCUMENTATION:** Enter Manual Override Reason to continue:")
     
     st.markdown("#### 🔬 Concomitant Drug-Drug Interaction (DDI) Metrics")
     azole_selection = st.selectbox(
@@ -138,29 +125,22 @@ with col1:
     )
 
 # ==============================================================================
-# 4. QUANTITATIVE PHARMACOLOGY SIMULATION & OUTCOMES DATA ENGINE
+# 4. QUANTITATIVE PHARMACOLOGY SIMULATION ENGINE
 # ==============================================================================
 with col2:
     st.markdown("### 📊 5. Multi-Omic & Pharmacological Risk Simulation")
     
-    # Interactive Trigger Button
     run_sim = st.button("⚡ Execute Live Evidence-Based Risk Evaluation")
     
     if run_sim:
-        if is_capped and not override_reason:
-            st.error("❌ **Execution Blocked:** Cannot compute validation logs or dose adjustments without explicit manual override justification string input.")
+        if is_capped and (not override_reason or override_reason == "N/A"):
+            st.error("❌ **Execution Blocked:** Manual override justification string required.")
         else:
-            with st.spinner("Processing pharmacokinetic clearance constants and patient data loops..."):
-                # --------------------------------------------------------------
-                # CLINICAL DETERMINISTIC RISK MODEL ARCHITECTURE
-                # --------------------------------------------------------------
-                base_prob = 12.5  # Core background toxicity frequency percentage
-                
-                # Age-dependent metric scaling
+            with st.spinner("Processing pharmacokinetic clearance constants..."):
+                base_prob = 12.5  
                 age_factor = 2.2 if age > 9.5 else 1.0
                 prob_calc = base_prob * age_factor
                 
-                # CYP3A4 Drug Interaction Scaling Constants
                 cyp3a4_inhibition = 1.0
                 ddi_class = "Category A: No Active DDI Mapped"
                 if azole_selection == "Fluconazole (Weak/Moderate CYP3A4 Inhibitor)":
@@ -168,3 +148,35 @@ with col2:
                     ddi_class = "Category C: Monitor Chemotherapy Safety"
                 elif azole_selection in ["Voriconazole (Strong CYP3A4 Inhibitor)", "Itraconazole (Strong CYP3A4 Inhibitor)", "Posaconazole (Strong CYP3A4 Inhibitor)"]:
                     cyp3a4_inhibition = 2.80
+                    ddi_class = "Category X/D: Avoid Combination"
+                
+                cumulative_scalar = 1.0 + (max(0.0, cumulative_exposure - 3.5) * 0.18)
+                
+                omic_modifier = 1.0
+                if "Poor Metabolizer" in cyp3a5_genotype: omic_modifier += 0.40
+                if "CC" in cep72_genotype: omic_modifier += 0.60
+                elif "CT" in cep72_genotype: omic_modifier += 0.25
+                
+                final_toxicity_risk = min(prob_calc * cyp3a4_inhibition * cumulative_scalar * omic_modifier, 99.7)
+                
+                # Guideline Engine Calculations
+                guideline_dose = calculated_absolute_dose
+                if azole_selection in ["Voriconazole (Strong CYP3A4 Inhibitor)", "Itraconazole (Strong CYP3A4 Inhibitor)", "Posaconazole (Strong CYP3A4 Inhibitor)"]:
+                    guideline_dose = guideline_dose * 0.50
+                
+                hepatic_flag = "Unadjusted (Normal Hepatic Metrics)"
+                if bilirubin > 3.0:
+                    guideline_dose = guideline_dose * 0.25
+                    hepatic_flag = "Bilirubin > 3.0 mg/dL: Apply 75% Dose Reduction"
+                elif bilirubin > 1.5:
+                    guideline_dose = guideline_dose * 0.50
+                    hepatic_flag = "Bilirubin 1.5 - 3.0 mg/dL: Apply 50% Dose Reduction"
+                
+                guideline_dose = guideline_dose * grade_modifier
+                if guideline_dose > 2.0:
+                    guideline_dose = 2.0
+                
+                # UI Presentation (Clean layout without serialization break variables)
+                st.markdown("#### 🌡️ Computed Cumulative VIPN Risk Index")
+                card_style = "critical-card" if final_toxicity_risk > 65.0 else "metric-card"
+                
