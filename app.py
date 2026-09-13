@@ -33,7 +33,7 @@ st.markdown("---")
 # ==============================================================================
 # MEDICOLEGAL PROTECTION HUB (DR. MAYANK VIRMANI TRACK LOGIC)
 # ==============================================================================
-st.markdown('<div class="medicolegal-banner">🛡️ <b>MEDICOLEGAL DISCLAIMER:</b> This prototype computational model layer is developed by Dr. Mayank Virmani strictly for educational advancement, baseline learning evaluation tracking, and research validation benchmarking in digital health health systems. It does not constitute formal clinical medical advice or independent peer-reviewed dosing authorization. All treatment calibrations must be verified with active primary institutional oncology protocols.</div>', unsafe_allow_html=True)
+st.markdown('<div class="medicolegal-banner">🛡️ <b>MEDICOLEGAL DISCLAIMER:</b> This prototype computational model layer is developed by Dr. Mayank Virmani strictly for educational advancement, baseline learning evaluation tracking, and research validation benchmarking in digital health systems. It does not constitute formal clinical medical advice or independent peer-reviewed dosing authorization. All treatment calibrations must be verified with active primary institutional oncology protocols.</div>', unsafe_allow_html=True)
 
 # ==============================================================================
 # 2. SIDEBAR DEMOGRAPHICS & CRITICAL HEPATIC/RENAL LAB PANELS
@@ -69,54 +69,58 @@ tier_selection = st.radio(
      "Advanced Multi-Omic / High-End Tier (Full Pharmacogenomic Panel Enabled)"]
 )
 
+col1, col2 = st.columns(2)
+
 cyp_val, cep_val, abcb1_val, b12_val, malnutrition_val = 0, 0, 0, 0, 0
 comorbidity_cmt = False
 clinical_notes_string = ""
 
-if "Low-Resource" in tier_selection:
-    st.markdown('<div class="section-header">🥦 Diet, Nutrition & Comorbidity Phenotyping</div>', unsafe_allow_html=True)
-    dietary_regimen = st.selectbox("Dietary Intake Profile (Nutritional Factor)", ["Balanced Whole Diet Enriched", "Vegetarian / Low Animal Protein", "Strict Vegan (No Cobalamin)"])
-    malnutrition_profile = st.selectbox("Nutritional Stunting Profile", ["Normal Development", "Severe Acute Malnutrition (SAM / Muscle Wasting)"])
-    vit_b12_status = st.selectbox("Vitamin B12 Serum Baseline Assessment", ["Normal Status (>200 pg/mL)", "Severe Vitamin B12 Deficiency (<200 pg/mL)"])
-    comorbidity_cmt = st.checkbox("Inherited Peripheral Neuropathy History (CMT Disease Profile)")
-    
-    b12_val = 1 if "Severe" in vit_b12_status or "Strict Vegan" in dietary_regimen else 0
-    malnutrition_val = 1 if "Severe Acute" in malnutrition_profile else 0
-    clinical_notes_string = f"Dietary Matrix: {dietary_regimen} | B12 Status: {vit_b12_status}"
-else:
-    st.markdown('<div class="section-header">🧬 High-End Pharmacogenomic (PGx) Variant Matrix</div>', unsafe_allow_html=True)
-    cyp3a5 = st.selectbox("CYP3A5 Genotype Status (Clearance Kinetics)", ["Expressor (*1/*1 or *1/*3) - Normal", "Non-Expressor (*3/*3) - Severe Clearance Delay"])
-    cep72 = st.selectbox("CEP72 Genotype Variant (rs924607 Susceptibility)", ["Wild Type / Heterozygous", "Homozygous Mutant (rs924607 TT) - Extreme Vulnerability"])
-    abcb1 = st.selectbox("ABCB1 Transporter State (rs1045642 Efflux Capacity)", ["Wild Type (Normal Drug Pumping)", "Mutant Variant (TT) - Intracellular Accumulation Risk"])
-    
-    cyp_val = 1 if "Non-Expressor" in cyp3a5 else 0
-    cep_val = 1 if "Homozygous Mutant" in cep72 else 0
-    abcb1_val = 1 if "Mutant" in abcb1 else 0
-    clinical_notes_string = f"PGx -> CYP3A5: {cyp3a5} | CEP72: {cep72}"
+with col1:
+    if "Low-Resource" in tier_selection:
+        st.markdown('<div class="section-header">🥦 Diet, Nutrition & Comorbidity Phenotyping</div>', unsafe_allow_html=True)
+        dietary_regimen = st.selectbox("Dietary Intake Profile (Nutritional Factor)", ["Balanced Whole Diet Enriched", "Vegetarian / Low Animal Protein", "Strict Vegan (No Cobalamin)"])
+        malnutrition_profile = st.selectbox("Nutritional Stunting Profile", ["Normal Development", "Severe Acute Malnutrition (SAM / Muscle Wasting)"])
+        vit_b12_status = st.selectbox("Vitamin B12 Serum Baseline Assessment", ["Normal Status (>200 pg/mL)", "Severe Vitamin B12 Deficiency (<200 pg/mL)"])
+        comorbidity_cmt = st.checkbox("Inherited Peripheral Neuropathy History (CMT Disease Profile)")
+        
+        b12_val = 1 if "Severe" in vit_b12_status or "Strict Vegan" in dietary_regimen else 0
+        malnutrition_val = 1 if "Severe Acute" in malnutrition_profile else 0
+        clinical_notes_string = f"Dietary Matrix: {dietary_regimen} | B12 Status: {vit_b12_status}"
+    else:
+        st.markdown('<div class="section-header">🧬 High-End Pharmacogenomic (PGx) Variant Matrix</div>', unsafe_allow_html=True)
+        cyp3a5 = st.selectbox("CYP3A5 Genotype Status (Clearance Kinetics)", ["Expressor (*1/*1 or *1/*3) - Normal", "Non-Expressor (*3/*3) - Severe Clearance Delay"])
+        cep72 = st.selectbox("CEP72 Genotype Variant (rs924607 Susceptibility)", ["Wild Type / Heterozygous", "Homozygous Mutant (rs924607 TT) - Extreme Vulnerability"])
+        abcb1 = st.selectbox("ABCB1 Transporter State (rs1045642 Efflux Capacity)", ["Wild Type (Normal Drug Pumping)", "Mutant Variant (TT) - Intracellular Accumulation Risk"])
+        
+        cyp_val = 1 if "Non-Expressor" in cyp3a5 else 0
+        cep_val = 1 if "Homozygous Mutant" in cep72 else 0
+        abcb1_val = 1 if "Mutant" in abcb1 else 0
+        clinical_notes_string = f"PGx -> CYP3A5: {cyp3a5} | CEP72: {cep72}"
 
-st.markdown('<div class="section-header">💊 Treatment Protocol & DDI Sync</div>', unsafe_allow_html=True)
-cumulative_vcr_dose = st.slider("Current Cumulative Vincristine Exposure (mg/m²)", min_value=2.0, max_value=50.0, value=12.0, step=0.5)
-azole_coadmin = st.selectbox("Concomitant Azole Antifungal Deployment", ["None / Safe Alternative", "Active Azole Exposure (Voriconazole, Itraconazole, Fluconazole)"])
-radiation_involved = st.checkbox("Concurrent Localized / Cranio-Spinal Radiation Protocol active")
-azole_val = 1 if "Active" in azole_coadmin else 0
-rt_val = 1 if radiation_involved else 0
+    st.markdown('<div class="section-header">💊 Treatment Protocol & DDI Sync</div>', unsafe_allow_html=True)
+    cumulative_vcr_dose = st.slider("Current Cumulative Vincristine Exposure (mg/m²)", min_value=2.0, max_value=50.0, value=12.0, step=0.5)
+    azole_coadmin = st.selectbox("Concomitant Azole Antifungal Deployment", ["None / Safe Alternative", "Active Azole Exposure (Voriconazole, Itraconazole, Fluconazole)"])
+    radiation_involved = st.checkbox("Concurrent Localized / Cranio-Spinal Radiation Protocol active")
+    azole_val = 1 if "Active" in azole_coadmin else 0
+    rt_val = 1 if radiation_involved else 0
 
 # ==============================================================================
 # 4. CURRENT ACTIVE SYMPTOMS TRACKER (NCI-CTCAE v5.0 STANDARDS CHECKLIST)
 # ==============================================================================
-st.markdown('<div class="section-header">📋 Current Active Symptoms Tracker (NCI-CTCAE v5.0)</div>', unsafe_allow_html=True)
-s_paresthesia = st.checkbox("Paresthesia (Numbness, tingling, burning sensation in hands/feet)")
-s_reflexes = st.checkbox("Hyporeflexia / Loss of deep tendon reflexes (Ankle jerk absent)")
-s_footdrop = st.checkbox("Foot Drop / Altered motor gait velocity or dragging limbs")
-s_neuralgia = st.checkbox("Severe Autonomic Neuralgia / Debilitating jaw or abdominal pain")
-s_adl = st.selectbox("Impact on Daily Activities (ADL)", ["No Impact", "Minimal Impact (Can dress/feed self)", "Severe Impact (Assistance required for basic ADL)"])
+with col2:
+    st.markdown('<div class="section-header">📋 Current Active Symptoms Tracker (NCI-CTCAE v5.0)</div>', unsafe_allow_html=True)
+    s_paresthesia = st.checkbox("Paresthesia (Numbness, tingling, burning sensation in hands/feet)")
+    s_reflexes = st.checkbox("Hyporeflexia / Loss of deep tendon reflexes (Ankle jerk absent)")
+    s_footdrop = st.checkbox("Foot Drop / Altered motor gait velocity or dragging limbs")
+    s_neuralgia = st.checkbox("Severe Autonomic Neuralgia / Debilitating jaw or abdominal pain")
+    s_adl = st.selectbox("Impact on Daily Activities (ADL)", ["No Impact", "Minimal Impact (Can dress/feed self)", "Severe Impact (Assistance required for basic ADL)"])
 
-current_clinical_grade = 0
-if s_paresthesia or s_reflexes: current_clinical_grade = 1
-if s_neuralgia or (s_paresthesia and "Minimal" in s_adl): current_clinical_grade = 2
-if s_footdrop or "Severe" in s_adl: current_clinical_grade = 3
+    current_clinical_grade = 0
+    if s_paresthesia or s_reflexes: current_clinical_grade = 1
+    if s_neuralgia or (s_paresthesia and "Minimal" in s_adl): current_clinical_grade = 2
+    if s_footdrop or "Severe" in s_adl: current_clinical_grade = 3
 
-st.markdown(f'<div class="ctcae-box">📈 <b>Computed Severity Status:</b> CTCAE v5.0 Grade {current_clinical_grade} Peripheral Neuropathy</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="ctcae-box">📈 <b>Computed Severity Status:</b> CTCAE v5.0 Grade {current_clinical_grade} Peripheral Neuropathy</div>', unsafe_allow_html=True)
 
 # ==============================================================================
 # 5. ALGORITHMIC RISK PREDICTION MODEL ENGINE
@@ -141,5 +145,3 @@ st.markdown("---")
 st.subheader("📊 Model Output Scorecard")
 st.text(f"Calculated Patient BSA: {bsa_calc:.2f} m²")
 st.text(f"Calculated Kidney Function (CrCl): {crcl_calc:.1f} mL/min")
-st.text(f"Model-Driven VIPN Risk Probability: {predicted_toxicity_probability:.1f} %")
-st.text(f"Standard Protocol Baseline Dose (Guideline Cap Applied): {guideline_baseline_dose:.2f} mg")
