@@ -142,7 +142,7 @@ if total_bilirubin > 1.5:
 predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
 
 # ==============================================================================
-# 6. ONCOLOGY DOSAGE ADAPTATION GUIDELINE LOGIC (STRICT INDENTATION CHECKS)
+# 6. ONCOLOGY DOSAGE ADAPTATION GUIDELINE LOGIC
 # ==============================================================================
 reduction_percentage = 0
 reduction_reasons = []
