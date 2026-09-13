@@ -143,4 +143,3 @@ st.text(f"Calculated Patient BSA: {bsa_calc:.2f} m²")
 st.text(f"Calculated Kidney Function (CrCl): {crcl_calc:.1f} mL/min")
 st.text(f"Model-Driven VIPN Risk Probability: {predicted_toxicity_probability:.1f} %")
 st.text(f"Standard Protocol Baseline Dose (Guideline Cap Applied): {guideline_baseline_dose:.2f} mg")
-
