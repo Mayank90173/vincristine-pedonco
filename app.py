@@ -113,9 +113,12 @@ s_neuralgia = st.checkbox("Severe Autonomic Neuralgia / Debilitating jaw or abdo
 s_adl = st.selectbox("Impact on Daily Activities (ADL)", ["No Impact", "Minimal Impact (Can dress/feed self)", "Severe Impact (Assistance required for basic ADL)"])
 
 current_clinical_grade = 0
-if s_paresthesia or s_reflexes: current_clinical_grade = 1
-if s_neuralgia or (s_paresthesia and "Minimal" in s_adl): current_clinical_grade = 2
-if s_footdrop or "Severe" in s_adl: current_clinical_grade = 3
+if s_paresthesia or s_reflexes: 
+    current_clinical_grade = 1
+if s_neuralgia or (s_paresthesia and "Minimal" in s_adl): 
+    current_clinical_grade = 2
+if s_footdrop or "Severe" in s_adl: 
+    current_clinical_grade = 3
 
 st.markdown(f'<div class="ctcae-box">📈 <b>Computed Severity Status:</b> CTCAE v5.0 Grade {current_clinical_grade} Peripheral Neuropathy</div>', unsafe_allow_html=True)
 
@@ -129,14 +132,17 @@ if "Low-Resource" in tier_selection:
 else:
     log_odds_calc += (1.4 * cyp_val) + (2.8 * cep_val) + (1.8 * abcb1_val)
 
-if comorbidity_cmt: log_odds_calc += 5.0
-if alt > 120 or ast > 120: log_odds_calc += 2.2
-if total_bilirubin > 1.5: log_odds_calc += 2.5
+if comorbidity_cmt: 
+    log_odds_calc += 5.0
+if alt > 120 or ast > 120: 
+    log_odds_calc += 2.2
+if total_bilirubin > 1.5: 
+    log_odds_calc += 2.5
 
 predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
 
 # ==============================================================================
-# 6. ONCOLOGY DOSAGE ADAPTATION GUIDELINE LOGIC
+# 6. ONCOLOGY DOSAGE ADAPTATION GUIDELINE LOGIC (STRICT INDENTATION CHECKS)
 # ==============================================================================
 reduction_percentage = 0
 reduction_reasons = []
@@ -148,5 +154,3 @@ elif current_clinical_grade >= 3:
     reduction_percentage += 100
     reduction_reasons.append("CTCAE Grade >=3 Neuropathy detected (Hold therapy completely)")
 
-if total_bilirubin > 1.5 and total_bilirubin <= 3.0:
-    if reduction_percentage < 50:
