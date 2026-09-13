@@ -2,6 +2,9 @@ import streamlit as st
 import math
 import pandas as pd
 import numpy as np
+import base64
+import io
+import matplotlib.pyplot as plt
 from datetime import datetime
 
 # ==============================================================================
@@ -27,7 +30,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown('<h1 class="main-title">🧠 Pediatric VIPN Clinical Intelligence Command Center</h1>', unsafe_allow_html=True)
-st.markdown('<p class="sub-title">Advanced Multimodal Decision Support Engine for Low-Resource Bedside vs High-End Precision Neuro-Oncology</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-title">Computational Decision Support System (CDSS) Powered by an Embedded 1,000-Patient Precision Oncology Model Layer</p>', unsafe_allow_html=True)
 st.markdown("---")
 
 # ==============================================================================
@@ -40,7 +43,6 @@ sex = st.sidebar.selectbox("Biological Sex", ["Male", "Female"])
 weight = st.sidebar.number_input("Weight (kg)", min_value=2.0, max_value=120.0, value=22.4, step=0.1)
 height = st.sidebar.number_input("Height (cm)", min_value=40.0, max_value=220.0, value=115.0, step=0.5)
 
-# BSA Calculation
 bsa_calc = math.sqrt((weight * height) / 3600.0)
 
 st.sidebar.markdown("### 🧪 Organ Toxicity Function Panel")
@@ -147,12 +149,8 @@ with res_col2:
 with res_col3:
     st.metric(label="Model-Driven VIPN Risk Probability", value=f"{predicted_toxicity_probability:.1f} %")
 with res_col4:
-    st.metric(label="Guideline Baseline Dose", value=f"{guideline_baseline_dose:.2f} mg")
+    st.metric(label="Standard Protocol Target Dose", value=f"{guideline_baseline_dose:.2f} mg")
 
 # ==============================================================================
 # 7. IMMEDIATE DOSAGE AMENDMENT ENGINE & FUTURE CLINICAL FORECASTS
 # ==============================================================================
-st.markdown('### 🩺 Immediate Dosage Amendment & Future Clinical Warnings')
-
-adjusted_dose = guideline_baseline_dose
-action_protocol_string = ""
