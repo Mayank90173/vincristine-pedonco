@@ -3,16 +3,13 @@ import math
 import pandas as pd
 import numpy as np
 import io
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib import colors
+from datetime import datetime
 
 # ==============================================================================
-# 1. PAGE CONFIGURATION & STYLING MANAGEMENT
+# 1. CORE STYLING & INSTITUTIONAL LAYOUT MANAGEMENT
 # ==============================================================================
 st.set_page_config(
-    page_title="VIPN Clinical Intelligence Command Center", 
+    page_title="VIPN Precision Intelligence Command Center", 
     page_icon="🧠", 
     layout="wide",
     initial_sidebar_state="expanded"
@@ -23,18 +20,17 @@ st.markdown("""
     .main-title { font-family: 'Helvetica Neue', Arial, sans-serif; color: #1a365d; font-weight: 800; margin-bottom: 2px; }
     .sub-title { font-family: 'Arial', sans-serif; color: #2f855a; font-weight: 600; font-size: 1.15rem; margin-bottom: 20px; }
     .section-header { color: #2b6cb0; font-weight: 700; font-size: 1.25rem; margin-top: 25px; margin-bottom: 12px; border-left: 6px solid #319795; padding-left: 12px; }
-    .tier-box { background-color: #f7fafc; padding: 18px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 15px; }
     .protocol-card { background-color: #ebf8ff; border-top: 4px solid #3182ce; padding: 20px; border-radius: 6px; margin-top: 15px; }
     .ctcae-box { background-color: #fffaf0; border-left: 5px solid #dd6b20; padding: 12px; border-radius: 4px; margin-bottom: 8px; }
     </style>
 """, unsafe_allow_html=True)
 
 st.markdown('<h1 class="main-title">🧠 Pediatric VIPN Clinical Intelligence Command Center</h1>', unsafe_allow_html=True)
-st.markdown('<p class="sub-title">Advanced Multi-Factorial Digital Health Platform for Low-Resource vs High-End Precision Neuro-Oncology</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-title">Advanced Stratified Digital Health Interface for Precision Neuro-Oncology Dosing Control</p>', unsafe_allow_html=True)
 st.markdown("---")
 
 # ==============================================================================
-# 2. SIDEBAR PARAMETER SELECTIONS (DEMOGRAPHICS & LAB PANELS)
+# 2. DEMOGRAPHICS & CRITICAL HEPATIC/RENAL FUNCTION CHANNELS
 # ==============================================================================
 st.sidebar.markdown("### 🏥 Patient Demographics & Baseline Vitals")
 patient_id = st.sidebar.text_input("Patient Registry ID", value="PED-VIPN-2026")
@@ -43,7 +39,6 @@ sex = st.sidebar.selectbox("Biological Sex", ["Male", "Female"])
 weight = st.sidebar.number_input("Weight (kg)", min_value=2.0, max_value=120.0, value=22.4, step=0.1)
 height = st.sidebar.number_input("Height (cm)", min_value=40.0, max_value=220.0, value=115.0, step=0.5)
 
-# Calculate BSA
 bsa = math.sqrt((weight * height) / 3600.0)
 
 st.sidebar.markdown("### 🧪 Organ Toxicity Function Panel")
@@ -59,7 +54,7 @@ standard_calculated_dose = bsa * 1.5
 guideline_baseline_dose = 2.0 if standard_calculated_dose > 2.0 else standard_calculated_dose
 
 # ==============================================================================
-# 3. INTERACTIVE CHANNELS (GAREEB VS HIGH-END PRECISION LAYERS)
+# 3. SEGREGATED SCREENING SELECTIONS (GAREEB VS HIGH-END CONFIGURATIONS)
 # ==============================================================================
 tier_selection = st.radio(
     "📊 Select Clinical Modality / Economic Screening Horizon",
@@ -72,7 +67,7 @@ col1, col2 = st.columns(2)
 with col1:
     if "Low-Resource" in tier_selection:
         st.markdown('<div class="section-header">🥦 Diet, Nutrition & Comorbidity Phenotyping</div>', unsafe_allow_html=True)
-        dietary_regimen = st.selectbox("Dietary Intake Profile (Nutritional Factor)", ["Strict Vegan (No Cobalamin Intake Group)", "Vegetarian / Low Animal Protein", "Balanced Whole Diet Enriched"])
+        dietary_regimen = st.selectbox("Dietary Intake Profile (Nutritional Factor)", ["Strict Vegan (No Cobalamin)", "Vegetarian / Low Animal Protein", "Balanced Whole Diet Enriched"])
         malnutrition_profile = st.selectbox("Nutritional Stunting Profile", ["Normal Development", "Severe Acute Malnutrition (SAM / Muscle Wasting)"])
         vit_b12_status = st.selectbox("Vitamin B12 Serum Baseline Assessment", ["Normal Status (>200 pg/mL)", "Severe Vitamin B12 Deficiency (<200 pg/mL)"])
         comorbidity_cmt = st.checkbox("Inherited Peripheral Neuropathy History (CMT Disease Profile)")
@@ -99,7 +94,7 @@ with col1:
     rt_val = 1 if radiation_involved else 0
 
 # ==============================================================================
-# 4. NCI-CTCAE v5.0 LIVE SYMPTOM EVALUATIONS CHECKLIST
+# 4. CRITICAL PHENOTYPING PANEL (NCI-CTCAE v5.0 STANDARDS LOGIC)
 # ==============================================================================
 with col2:
     st.markdown('<div class="section-header">📋 Current Active Symptoms Tracker (NCI-CTCAE v5.0)</div>', unsafe_allow_html=True)
@@ -117,7 +112,7 @@ with col2:
     st.markdown(f'<div class="ctcae-box">📈 <b>Computed Severity Status:</b> CTCAE v5.0 Grade {current_clinical_grade} Peripheral Motor/Sensory Neuropathy</div>', unsafe_allow_html=True)
 
 # ==============================================================================
-# 5. ALGORITHMIC RISK COEFFICIENTS CALCULATIONS
+# 5. RISK PREDICTION COMPILATIONS
 # ==============================================================================
 log_odds_base = -3.5 + (0.08 * age) + (0.06 * cumulative_vcr_dose) + (2.3 * azole_val) + (1.9 * rt_val)
 
@@ -133,7 +128,34 @@ if total_bilirubin > 1.5: log_odds_calc += 2.5
 predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
 
 # ==============================================================================
-# INTERACTIVE MATH SIMULATION WIDGET (THE VALUE PROMISE)
+# 6. OUTPUT VALIDATION PANEL & DOSING ENGINE INTERFACE
 # ==============================================================================
-st.markdown("### 🧮 Interactive Multi-Omic Calculator Matrix")
-st.caption("Adjust model variables below in real time to observe the corresponding shift in calculated toxicity risk probability limits.")
+st.markdown("---")
+res_col1, res_col2, res_col3, res_col4 = st.columns(4)
+
+with res_col1:
+    st.metric(label="Calculated Patient BSA", value=f"{bsa:.2f} m²")
+with res_col2:
+    st.metric(label="Calculated Kidney Function (CrCl)", value=f"{crcl:.1f} mL/min")
+with res_col3:
+    st.metric(label="Model-Driven VIPN Risk Probability", value=f"{predicted_toxicity_probability:.1f} %")
+with res_col4:
+    st.metric(label="Guideline Baseline Dose", value=f"{guideline_baseline_dose:.2f} mg")
+
+# ==============================================================================
+# 7. FIXED IMMEDIATE DOSAGE AMENDMENT ENGINE
+# ==============================================================================
+st.markdown('<div class="section-header">🩺 Immediate Dosage Amendment & Future Clinical Warnings</div>', unsafe_allow_html=True)
+
+adjusted_dose = guideline_baseline_dose
+action_protocol_string = ""
+future_warnings_list = []
+
+if comorbidity_cmt or current_clinical_grade >= 3:
+    adjusted_dose = 0.0
+    action_protocol_string = "🔴 <b>CRITICAL PROTOCOL TERMINATION ALERT: Hold/Omit Vincristine Completely.</b>"
+    future_warnings_list.append("Extreme hazard of developing persistent quadriplegia, irreversible muscle atrophy, and secondary autonomic paralytic ileus.")
+    future_warnings_list.append("Initiate intense sensory retraining rehabilitation and high-dose neurotrophic supportive strategies.")
+
+elif total_bilirubin > 3.0:
+    adjusted_dose = guideline_baseline_dose * 0.25
