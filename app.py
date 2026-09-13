@@ -24,10 +24,10 @@ st.markdown("""
     .warning-box { background-color: #fff5f5; border-left: 5px solid #e53e3e; padding: 10px; border-radius: 4px; margin-bottom: 5px; color: #c53030; font-size: 0.95rem; }
     .pharm-report-box { background-color: #f7fafc; border: 1px solid #cbd5e0; padding: 15px; border-radius: 6px; margin-top: 10px; }
     
-    /* Interactive HTML Cellular Axon Brain Loop Styles */
+    /* Interactive HTML Cellular Axon Styles */
     .axon-container { background-color: #f8fafc; border: 2px solid #e2e8f0; padding: 20px; border-radius: 8px; text-align: center; margin-top: 15px; }
     .axon-membrane { border-top: 3px dashed #718096; border-bottom: 3px dashed #718096; padding: 30px 10px; margin: 20px 0; background: linear-gradient(180deg, #edf2f7 0%, #ffffff 50%, #edf2f7 100%); position: relative; }
-    .tubulin-strand { font-weight: bold; color: #319795; font-size: 1.2rem; letter-spacing: 4px; display: inline-block; animation: wave 2s infinite ease-in-out; }
+    .tubulin-strand { font-weight: bold; color: #319795; font-size: 1.2rem; letter-spacing: 4px; display: inline-block; }
     .vcr-molecule { background-color: #e53e3e; color: white; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; display: inline-block; margin: 0 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .variant-alert-box { background-color: #feebc8; border: 1px solid #fbd38d; color: #dd6b20; padding: 10px; border-radius: 4px; font-size: 0.9rem; margin-top: 10px; font-weight: 600; }
     </style>
@@ -47,7 +47,6 @@ sex = st.sidebar.selectbox("Biological Sex", ["Male", "Female"])
 weight = st.sidebar.number_input("Weight (kg)", min_value=2.0, max_value=120.0, value=22.4, step=0.1)
 height = st.sidebar.number_input("Height (cm)", min_value=40.0, max_value=220.0, value=115.0, step=0.5)
 
-# BSA Calculation
 bsa_calc = math.sqrt((weight * height) / 3600.0)
 
 st.sidebar.markdown("### 🧪 Organ Toxicity Function Panel")
@@ -141,3 +140,5 @@ if total_bilirubin > 1.5: log_odds_calc += 2.5
 
 predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
 
+# ==============================================================================
+# 6. OUTPUT VALIDATION PANEL & DOSING ENGINE INTERFACE
