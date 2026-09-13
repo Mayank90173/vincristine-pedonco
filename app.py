@@ -72,7 +72,6 @@ tier_selection = st.radio(
 
 cyp_val, cep_val, abcb1_val, b12_val, malnutrition_val = 0, 0, 0, 0, 0
 comorbidity_cmt = False
-clinical_notes_string = ""
 
 if "Low-Resource" in tier_selection:
     st.markdown('<div class="section-header">🥦 Diet, Nutrition & Comorbidity Phenotyping</div>', unsafe_allow_html=True)
@@ -83,7 +82,6 @@ if "Low-Resource" in tier_selection:
     
     b12_val = 1 if "Severe" in vit_b12_status or "Strict Vegan" in dietary_regimen else 0
     malnutrition_val = 1 if "Severe Acute" in malnutrition_profile else 0
-    clinical_notes_string = f"Dietary Matrix: {dietary_regimen} | B12 Status: {vit_b12_status}"
 else:
     st.markdown('<div class="section-header">🧬 High-End Pharmacogenomic (PGx) Variant Matrix</div>', unsafe_allow_html=True)
     cyp3a5 = st.selectbox("CYP3A5 Genotype Status (Clearance Kinetics)", ["Expressor (*1/*1 or *1/*3) - Normal", "Non-Expressor (*3/*3) - Severe Clearance Delay"])
@@ -93,7 +91,6 @@ else:
     cyp_val = 1 if "Non-Expressor" in cyp3a5 else 0
     cep_val = 1 if "Homozygous Mutant" in cep72 else 0
     abcb1_val = 1 if "Mutant" in abcb1 else 0
-    clinical_notes_string = f"PGx -> CYP3A5: {cyp3a5} | CEP72: {cep72}"
 
 st.markdown('<div class="section-header">💊 Treatment Protocol & DDI Sync</div>', unsafe_allow_html=True)
 cumulative_vcr_dose = st.slider("Current Cumulative Vincristine Exposure (mg/m²)", min_value=2.0, max_value=50.0, value=12.0, step=0.5)
@@ -142,14 +139,18 @@ if total_bilirubin > 1.5:
 predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
 
 # ==============================================================================
-# 6. ONCOLOGY DOSAGE ADAPTATION GUIDELINE LOGIC (FIXED PGx CALIBRATION)
+# 6. ONCOLOGY DOSAGE ADAPTATION GUIDELINE LOGIC (FIXED MULTI-FACTOR ACCUMULATOR)
 # ==============================================================================
 reduction_percentage = 0
 reduction_reasons = []
 
-# Clinical CTCAE Grading Logic
+# Factor 1: Clinical Neurotoxicity Grade Rules
 if current_clinical_grade == 2:
     reduction_percentage += 50
-    reduction_reasons.append("CTCAE Grade 2 Neuropathy detected")
+    reduction_reasons.append("CTCAE Grade 2 Neuropathy Alert (50% Reduction)")
 elif current_clinical_grade >= 3:
     reduction_percentage += 100
+    reduction_reasons.append("CTCAE Grade >=3 Critical Neuropathy (Therapy Hold)")
+
+# Factor 2: Tier Specific Modifiers (Independent addition logic)
+if "Advanced Multi-Omic" in tier_selection:
