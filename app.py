@@ -22,6 +22,13 @@ st.markdown("""
     .ctcae-box { background-color: #fffaf0; border-left: 5px solid #dd6b20; padding: 12px; border-radius: 4px; margin-bottom: 8px; }
     .warning-box { background-color: #fff5f5; border-left: 5px solid #e53e3e; padding: 10px; border-radius: 4px; margin-bottom: 5px; color: #c53030; font-size: 0.95rem; }
     .pharm-report-box { background-color: #f7fafc; border: 1px solid #cbd5e0; padding: 15px; border-radius: 6px; margin-top: 10px; }
+    
+    /* Interactive HTML Cellular Axon Styles */
+    .axon-container { background-color: #f8fafc; border: 2px solid #e2e8f0; padding: 20px; border-radius: 8px; text-align: center; margin-top: 15px; }
+    .axon-membrane { border-top: 3px dashed #718096; border-bottom: 3px dashed #718096; padding: 30px 10px; margin: 20px 0; background: linear-gradient(180deg, #edf2f7 0%, #ffffff 50%, #edf2f7 100%); position: relative; }
+    .tubulin-strand { font-weight: bold; color: #319795; font-size: 1.2rem; letter-spacing: 4px; display: inline-block; }
+    .vcr-molecule { background-color: #e53e3e; color: white; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; display: inline-block; margin: 0 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .variant-alert-box { background-color: #feebc8; border: 1px solid #fbd38d; color: #dd6b20; padding: 10px; border-radius: 4px; font-size: 0.9rem; margin-top: 10px; font-weight: 600; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -82,7 +89,7 @@ with col1:
         
         b12_val = 1 if "Severe" in vit_b12_status or "Strict Vegan" in dietary_regimen else 0
         malnutrition_val = 1 if "Severe Acute" in malnutrition_profile else 0
-        clinical_notes_string = f"Dietary: {dietary_regimen} | B12: {vit_b12_status} | Nutrition: {malnutrition_profile}"
+        clinical_notes_string = f"Dietary Matrix: {dietary_regimen} | B12 Status: {vit_b12_status} | Nutrition Profile: {malnutrition_profile}"
     else:
         st.markdown('<div class="section-header">🧬 High-End Pharmacogenomic (PGx) Variant Matrix</div>', unsafe_allow_html=True)
         cyp3a5 = st.selectbox("CYP3A5 Genotype Status (Clearance Kinetics)", ["Expressor (*1/*1 or *1/*3) - Normal", "Non-Expressor (*3/*3) - Severe Clearance Delay"])
@@ -138,22 +145,3 @@ predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
 # ==============================================================================
 # 6. OUTPUT VALIDATION PANEL & DOSING ENGINE INTERFACE
 # ==============================================================================
-st.markdown("---")
-res_col1, res_col2, res_col3, res_col4 = st.columns(4)
-
-with res_col1:
-    st.metric(label="Calculated Patient BSA", value=f"{bsa_calc:.2f} m²")
-with res_col2:
-    st.metric(label="Calculated Kidney Function (CrCl)", value=f"{crcl_calc:.1f} mL/min")
-with res_col3:
-    st.metric(label="Model-Driven VIPN Risk Probability", value=f"{predicted_toxicity_probability:.1f} %")
-with res_col4:
-    st.metric(label="Standard Protocol Baseline Dose", value=f"{guideline_baseline_dose:.2f} mg")
-
-# ==============================================================================
-# 7. NATIVE BULLETPROOF DOSAGE AMENDMENT ENGINE & FUTURE CLINICAL FORECASTS
-# ==============================================================================
-st.markdown('<div class="section-header">🩺 Immediate Dosage Amendment & Future Clinical Warnings</div>', unsafe_allow_html=True)
-
-adjusted_dose = guideline_baseline_dose
-action_status = "STABLE"
