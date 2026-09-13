@@ -47,6 +47,7 @@ sex = st.sidebar.selectbox("Biological Sex", ["Male", "Female"])
 weight = st.sidebar.number_input("Weight (kg)", min_value=2.0, max_value=120.0, value=22.4, step=0.1)
 height = st.sidebar.number_input("Height (cm)", min_value=40.0, max_value=220.0, value=115.0, step=0.5)
 
+# BSA Calculation
 bsa_calc = math.sqrt((weight * height) / 3600.0)
 
 st.sidebar.markdown("### 🧪 Organ Toxicity Function Panel")
