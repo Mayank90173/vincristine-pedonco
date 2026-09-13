@@ -2,161 +2,158 @@ import streamlit as st
 import math
 import pandas as pd
 import numpy as np
-from datetime import datetime
 
 # ==============================================================================
-# 1. PAGE ARCHITECTURE & SKIN CONFIGURATION
+# 1. ARCHITECTURE & CLINICAL INSTITUTIONAL STYLING
 # ==============================================================================
 st.set_page_config(
-    page_title="VIPN Precision Pharmacology Platform", 
-    page_icon="🧬", 
+    page_title="VIPN Precision Protocol Engine", 
+    page_icon="🩺", 
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom Institutional Medical Theme Styling Rules
 st.markdown("""
     <style>
-    .main-title { font-family: 'Helvetica Neue', Arial, sans-serif; color: #1e3d59; font-weight: 700; margin-bottom: 5px; }
-    .sub-title { font-family: 'Arial', sans-serif; color: #17b978; font-weight: 500; font-size: 1.2rem; margin-bottom: 25px; }
-    .section-header { color: #1e3d59; font-weight: 600; font-size: 1.3rem; margin-top: 20px; margin-bottom: 15px; border-left: 5px solid #17b978; padding-left: 10px; }
-    .metric-box { background-color: #f5f7fa; padding: 15px; border-radius: 8px; border: 1px solid #e4e7ed; }
-    .danger-alert { background-color: #fef0f0; border-left: 5px solid #f56c6c; color: #f56c6c; padding: 15px; border-radius: 4px; margin-bottom: 15px; }
-    .success-alert { background-color: #f0f9eb; border-left: 5px solid #67c23a; color: #67c23a; padding: 15px; border-radius: 4px; margin-bottom: 15px; }
+    .main-title { font-family: 'Helvetica Neue', Arial, sans-serif; color: #1a365d; font-weight: 800; margin-bottom: 2px; }
+    .sub-title { font-family: 'Arial', sans-serif; color: #2f855a; font-weight: 600; font-size: 1.15rem; margin-bottom: 20px; }
+    .section-header { color: #2b6cb0; font-weight: 700; font-size: 1.25rem; margin-top: 25px; margin-bottom: 12px; border-left: 6px solid #319795; padding-left: 12px; }
+    .tier-box { background-color: #f7fafc; padding: 18px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 15px; }
+    .protocol-card { background-color: #ebf8ff; border-top: 4px solid #3182ce; padding: 20px; border-radius: 6px; margin-top: 15px; }
+    .ctcae-box { background-color: #fffaf0; border-left: 5px solid #dd6b20; padding: 12px; border-radius: 4px; margin-bottom: 8px; }
     </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<h1 class="main-title">🧬 Pediatric VIPN Precision Pharmacology & Multi-Omics Platform</h1>', unsafe_allow_html=True)
-st.markdown('<p class="sub-title">Advanced Translational Decision Support Engine for Low-Resource Precision Neuro-Oncology</p>', unsafe_allow_html=True)
+st.markdown('<h1 class="main-title">🩺 Pediatric VIPN Precision Protocol & Clinical Grading Engine</h1>', unsafe_allow_html=True)
+st.markdown('<p class="sub-title">Clinical Decision Support System (CDSS) for Stratified Low-Resource vs High-End Precision Neuro-Oncology</p>', unsafe_allow_html=True)
 st.markdown("---")
 
 # ==============================================================================
-# 2. SIDEBAR PARAMETER INTERFACE (DEMOGRAPHICS & ORGAN LABS)
+# 2. SIDEBAR: BEDSIDE DEMOGRAPHICS & CRITICAL ORGAN FUNCTION LABS
 # ==============================================================================
-st.sidebar.markdown("### 🏥 1. Demographics & Vital Labs")
-patient_id = st.sidebar.text_input("Patient Unique ID", value="PED-NEURO-1002")
-age = st.sidebar.slider("Patient Age (Years)", min_value=1.0, max_value=18.0, value=7.5, step=0.1)
+st.sidebar.markdown("### 🏥 Patient Demographics & Baseline Vitals")
+patient_id = st.sidebar.text_input("Patient Registry ID", value="PED-VIPN-2026")
+age = st.sidebar.slider("Age (Years)", min_value=1.0, max_value=18.0, value=6.5, step=0.1)
 sex = st.sidebar.selectbox("Biological Sex", ["Male", "Female"])
-weight = st.sidebar.number_input("Weight (kg)", min_value=2.0, max_value=120.0, value=25.4, step=0.1)
-height = st.sidebar.number_input("Height (cm)", min_value=40.0, max_value=220.0, value=122.0, step=0.5)
+weight = st.sidebar.number_input("Weight (kg)", min_value=2.0, max_value=120.0, value=22.4, step=0.1)
+height = st.sidebar.number_input("Height (cm)", min_value=40.0, max_value=220.0, value=115.0, step=0.5)
 
-# Calculate BSA using Mosteller Formula
+# BSA Calculation via Mosteller Formula
 bsa = math.sqrt((weight * height) / 3600.0)
 
-st.sidebar.markdown("#### 🧪 Organ Function Panels")
-scr = st.sidebar.number_input("Serum Creatinine (mg/dL)", min_value=0.1, max_value=5.0, value=0.52, step=0.01)
-alt = st.sidebar.number_input("ALT (SGPT) (U/L)", min_value=5, max_value=500, value=35, step=1)
-ast = st.sidebar.number_input("AST (SGOT) (U/L)", min_value=5, max_value=500, value=38, step=1)
-bilirubin = st.sidebar.number_input("Total Bilirubin (mg/dL)", min_value=0.1, max_value=10.0, value=0.6, step=0.1)
+st.sidebar.markdown("### 🧪 Organ Toxicity Function Panel")
+scr = st.sidebar.number_input("Serum Creatinine (mg/dL)", min_value=0.1, max_value=5.0, value=0.45, step=0.01)
+alt = st.sidebar.number_input("ALT (SGPT) (U/L)", min_value=5, max_value=600, value=35, step=1)
+ast = st.sidebar.number_input("AST (SGOT) (U/L)", min_value=5, max_value=600, value=38, step=1)
+total_bilirubin = st.sidebar.number_input("Total Bilirubin (mg/dL)", min_value=0.1, max_value=15.0, value=0.6, step=0.1)
 
-# Calculate Pediatric Creatinine Clearance using Schwartz Formula
-# k constant: 0.45 for infants, 0.55 for children/adolescednt girls, 0.70 for adolescent boys
-k_constant = 0.70 if (sex == "Male" and age >= 13) else 0.55
-crcl = (k_constant * height) / scr
+# Pediatric Creatinine Clearance calculation via Schwartz Formula
+k_const = 0.70 if (sex == "Male" and age >= 13) else 0.55
+crcl = (k_const * height) / scr
+
+# Standard Guideline Dosing Logic (1.5 mg/m2, capped absolute maximum at 2.0 mg per protocol guidelines)
+standard_calculated_dose = bsa * 1.5
+guideline_baseline_dose = 2.0 if standard_calculated_dose > 2.0 else standard_calculated_dose
 
 # ==============================================================================
-# 3. CLINICAL SECTIONS MAPPING INTERFACE (MAIN PAGE PANELS)
+# 3. STRATIFIED SCREENING MODALITY (GAREEB VS HIGH-END PATIENT CONFIGURATIONS)
 # ==============================================================================
+tier_selection = st.radio(
+    "📊 Select Clinical Modality / Economic Screening Horizon",
+    ["Standard Bedside / Low-Resource Tier (No Genetic Testing Afforded)", 
+     "Advanced Multi-Omic / High-End Tier (Full Pharmacogenomic Panel Enabled)"]
+)
+
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown('<div class="section-header">🧬 Pharmacogenomic (PGx) Status</div>', unsafe_allow_html=True)
-    cyp3a5 = st.selectbox(
-        "CYP3A5 Genotype Status (Drug Metabolism Catalyst)",
-        ["Expressor (*1/*1 or *1/*3) - Normal Clearance", "Non-Expressor (*3/*3) - 3.8x High Exposure Risk"]
-    )
-    cep72 = st.selectbox(
-        "CEP72 Genotype Variant (rs924607 Susceptibility)",
-        ["Wild Type / Heterozygous (Normal Chromosomal Stability)", "Homozygous Mutant (rs924607 TT) - 14.1x High Structural Toxicity Vulnerability"]
-    )
-    
-    st.markdown('<div class="section-header">🥦 Diet, Nutrition & Comorbidities</div>', unsafe_allow_html=True)
-    vit_b12 = st.selectbox(
-        "Vitamin B12 Serum Levels (Myelin Preservation Vector)",
-        ["Normal Status (>200 pg/mL)", "Severe Vitamin B12 Deficiency (<200 pg/mL) - 11.5x Demyelination Trigger"]
-    )
-    prior_neuropathy = st.checkbox("Pre-existing Comorbidity: Charcot-Marie-Tooth (CMT) or Inherited Neuropathies")
-    malnutrition = st.checkbox("Severe Acute Malnutrition (SAM/MAM Status Profile)")
+    if "Low-Resource" in tier_selection:
+        st.markdown('<div class="section-header">🥦 Low-Resource Bedside Phenotyping Matrix</div>', unsafe_allow_html=True)
+        vit_b12_status = st.selectbox("Vitamin B12 Serum Assessment", ["Normal Status (>200 pg/mL)", "Severe Vitamin B12 Deficiency (<200 pg/mL)"])
+        malnutrition_profile = st.selectbox("Nutritional Stunting Profile", ["Normal Development", "Severe Acute Malnutrition (SAM / Muscle Wasting)"])
+        comorbidity_cmt = st.checkbox("Inherited Peripheral Neuropathy History (CMT Disease Profile)")
+        
+        # Zero out PGx flags for low-resource mathematical routing tracking
+        cyp_val, cep_val, abcb1_val = 0, 0, 0
+        b12_val = 1 if "Severe" in vit_b12_status else 0
+        malnutrition_val = 1 if "Severe Acute" in malnutrition_profile else 0
+    else:
+        st.markdown('<div class="section-header">🧬 High-End High-Dimensional Multi-Omic Panel</div>', unsafe_allow_html=True)
+        cyp3a5 = st.selectbox("CYP3A5 Genotype Status (Clearance Kinetics)", ["Expressor (*1/*1 or *1/*3) - Normal", "Non-Expressor (*3/*3) - Severe Clearance Delay"])
+        cep72 = st.selectbox("CEP72 Genotype Variant (rs924607 Susceptibility)", ["Wild Type / Heterozygous", "Homozygous Mutant (rs924607 TT) - Extreme Vulnerability"])
+        abcb1 = st.selectbox("ABCB1 Transporter State (rs1045642 Efflux Capacity)", ["Wild Type (Normal Drug Pumping)", "Mutant Variant (TT) - Intracellular Neurological Drug Accumulation"])
+        
+        cyp_val = 1 if "Non-Expressor" in cyp3a5 else 0
+        cep_val = 1 if "Homozygous Mutant" in cep72 else 0
+        abcb1_val = 1 if "Mutant" in abcb1 else 0
+        # Standard default controls for genetic tier runtime settings
+        b12_val, malnutrition_val, comorbidity_cmt = 0, 0, False
 
+    st.markdown('<div class="section-header">⚡ Synergistic Protocol Co-Exposures</div>', unsafe_allow_html=True)
+    cumulative_vcr_dose = st.slider("Current Cumulative Vincristine Exposure (mg/m²)", min_value=2.0, max_value=50.0, value=12.0, step=0.5)
+    azole_coadmin = st.selectbox("Concomitant Azole Antifungal Deployment", ["None / Safe Alternative", "Active Azole Exposure (Voriconazole, Itraconazole, Fluconazole)"])
+    radiation_involved = st.checkbox("Concurrent Localized / Cranio-Spinal Radiation Protocol active")
+    azole_val = 1 if "Active" in azole_coadmin else 0
+    rt_val = 1 if radiation_involved else 0
+
+# ==============================================================================
+# 4. CRITICAL CHECKLIST: NCI-CTCAE v5.0 NEUROPATHY GRADING PHENOTYPING PANEL
+# ==============================================================================
 with col2:
-    st.markdown('<div class="section-header">💊 Treatment Protocol & DDI Sync</div>', unsafe_allow_html=True)
-    cumulative_dose = st.slider("Current Cumulative Vincristine Exposure (mg/m²)", min_value=2.0, max_value=50.0, value=14.0, step=0.5)
-    azole_coadmin = st.selectbox(
-        "Concomitant Azole Antifungal Co-prescription (CYP3A Inhibitors)",
-        ["None / Safe Alternative (Amphotericin B, Echinocandin)", "Active Azole Therapy (Voriconazole, Itraconazole, Fluconazole) - Severe DDI Enzyme Block"]
-    )
-    radiation_protocol = st.checkbox("Concurrent Localized / Cranio-Spinal Radiation Therapy Protocol")
+    st.markdown('<div class="section-header">📋 Current Active Symptoms Tracker (NCI-CTCAE v5.0)</div>', unsafe_allow_html=True)
+    st.caption("Select active symptom presentation to compute immediate formal neurological clinical grade:")
+    
+    s_paresthesia = st.checkbox("Paresthesia (Numbness, tingling, burning sensation in hands/feet)")
+    s_reflexes = st.checkbox("Hyporeflexia / Loss of deep tendon reflexes (Ankle jerk absent)")
+    s_footdrop = st.checkbox("Foot Drop / Altered motor gait velocity or dragging limbs")
+    s_neuralgia = st.checkbox("Severe Autonomic Neuralgia / Debilitating jaw or abdominal pain")
+    s_adl = st.selectbox("Impact on Daily Activities (ADL)", ["No Impact", "Minimal Impact (Can dress/feed self)", "Severe Impact (Assistance required for basic ADL)"])
 
+    # Establish NCI-CTCAE Grade Logic
+    current_clinical_grade = 0
+    if s_paresthesia or s_reflexes: current_clinical_grade = 1
+    if s_neuralgia or (s_paresthesia and "Minimal" in s_adl): current_clinical_grade = 2
+    if s_footdrop or "Severe" in s_adl: current_clinical_grade = 3
+    
+    st.markdown(f'<div class="ctcae-box">📈 <b>Computed Current Severity Status:</b> CTCAE v5.0 Grade {current_clinical_grade} Peripheral Motor/Sensory Neuropathy</div>', unsafe_allow_html=True)
+
+# ==============================================================================
+# 5. MULTI-TIER PHARMACOLOGICAL PREDICTIVE ALGORITHMIC RISK CALCULATIONS
+# ==============================================================================
+# Base intercept setup tracking mathematical validation logs
+log_odds_base = -3.5 + (0.08 * age) + (0.06 * cumulative_vcr_dose) + (2.3 * azole_val) + (1.9 * rt_val)
+
+if "Low-Resource" in tier_selection:
+    log_odds_calc = log_odds_base + (2.6 * b12_val) + (1.5 * malnutrition_val)
+else:
+    log_odds_calc = log_odds_base + (1.4 * cyp_val) + (2.8 * cep_val) + (1.8 * abcb1_val)
+
+# Apply absolute organic lab/comorbidity override weights
+if comorbidity_cmt: log_odds_calc += 5.0
+if alt > 120 or ast > 120: log_odds_calc += 2.2
+if total_bilirubin > 1.5: log_odds_calc += 2.5
+
+predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
+
+# ==============================================================================
+# 6. OUTPUT VALIDATION SPREADS & GUIDELINE DOSING ENGINE
+# ==============================================================================
 st.markdown("---")
-
-# ==============================================================================
-# 4. ADVANCED PHARMACOLOGICAL RISK ENGINE (MATHEMATICAL LEDGER INTEGRATION)
-# ==============================================================================
-st.markdown('<div class="section-header">🧮 Quantitative Risk Analytics Ledger</div>', unsafe_allow_html=True)
-
-# Map UI Selections back to exact mathematical model values
-cyp_val = 1 if "Non-Expressor" in cyp3a5 else 0
-cep_val = 1 if "Homozygous Mutant" in cep72 else 0
-b12_val = 1 if "Severe Vitamin B12 Deficiency" in vit_b12 else 0
-rt_val = 1 if radiation_protocol else 0
-azole_val = 1 if "Active Azole Therapy" in azole_coadmin else 0
-
-# Baseline algorithmic risk modeling using verified log-odds matrix
-log_odds_calc = (
-    -3.5
-    + 0.08 * age
-    + 0.06 * cumulative_dose
-    + 1.4 * cyp_val
-    + 2.8 * cep_val
-    + 2.6 * b12_val
-    + 1.9 * rt_val
-    + 2.3 * azole_val
-)
-
-# Add heavy penalty factors for severe comorbidities/liver organ damage profiles
-if prior_neuropathy: log_odds_calc += 4.5  # Absolute absolute contraindication barrier
-if alt > 150 or ast > 150: log_odds_calc += 2.0  # Acute hepatic block penalty
-if bilirubin > 2.0: log_odds_calc += 2.5  # Biliary excretion failure risk
-
-final_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
-
-# ==============================================================================
-# 5. RISK DISPLAY & CLINICAL DOSING RECOMMENDATIONS
-# ==============================================================================
-res_col1, res_col2, res_col3 = st.columns(3)
+res_col1, res_col2, res_col3, res_col4 = st.columns(4)
 
 with res_col1:
-    st.markdown('<div class="metric-box">', unsafe_allow_html=True)
-    st.metric(label="Calculated Body Surface Area (BSA)", value=f"{bsa:.2f} m²")
-    st.markdown('</div>', unsafe_allow_html=True)
-
+    st.metric(label="Calculated Patient BSA", value=f"{bsa:.2f} m²")
 with res_col2:
-    st.markdown('<div class="metric-box">', unsafe_allow_html=True)
-    st.metric(label="Pediatric Creatinine Clearance (CrCl)", value=f"{crcl:.1f} mL/min/1.73m²")
-    st.markdown('</div>', unsafe_allow_html=True)
-
+    st.metric(label="Calculated Kidney Function (CrCl)", value=f"{crcl:.1f} mL/min")
 with res_col3:
-    st.markdown('<div class="metric-box">', unsafe_allow_html=True)
-    st.metric(label="Computed VIPN Toxicity Probability", value=f"{final_probability:.1f} %")
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.metric(label="Model-Driven VIPN Risk Probability", value=f"{predicted_toxicity_probability:.1f} %")
+with res_col4:
+    st.metric(label="Guideline Baseline Dose", value=f"{guideline_baseline_dose:.2f} mg")
 
-st.markdown("<br>", unsafe_allow_html=True)
+# ==============================================================================
+# 7. HIGH-LEVEL RECOMMENDATIONS & CLINICAL DOSING AMENDMENTS
+# ==============================================================================
+st.markdown('<div class="section-header">🩺 Immediate Dosage Amendment & Future Clinical Warnings</div>', unsafe_allow_html=True)
 
-# Generate Clinical Action Recommendations Framework
-st.markdown("### 🩺 Guided Clinical Action Protocol")
-
-if prior_neuropathy:
-    st.markdown('<div class="danger-alert">⚠️ <b>CRITICAL CONTRAINDICATION ALERT:</b> Patient has inherited neuropathy comorbidity (CMT profile). High risk of developing severe, irreversible Grade 4 quadriparesis. Consider immediate protocol substitution with a non-neurotoxic therapeutic alternative.</div>', unsafe_allow_html=True)
-
-elif final_probability >= 65.0 or bilirubin > 1.5 or alt > 100:
-    st.markdown('<div class="danger-alert">⚠️ <b>HIGH TOXICITY TRIGGER ACCELERATION:</b> VIPN risk threshold crossed or hepatotoxicity limits flagged. Dosing recommendation: <b>REDUCE Vincristine dose by 50%</b> or temporarily hold therapy. Correct Vitamin B12 state immediately. Discontinue concomitant azole co-prescriptions.</div>', unsafe_allow_html=True)
-
-elif 35.0 <= final_probability < 65.0:
-    st.markdown('<div class="danger-alert" style="background-color: #fff8e6; border-left: 5px solid #e6a23c; color: #e6a23c;">⚠️ <b>MODERATE PREDICTIVE RISK ZONE:</b> Monitor deep tendon reflexes and gait patterns weekly. Ensure nutritional rehabilitation for malnutrition profiles. Maximize clinical monitoring parameters prior to upcoming dosing schedules.</div>', unsafe_allow_html=True)
-
-else:
-    st.markdown('<div class="success-alert">✅ <b>SAFE SCREENING HORIZON:</b> Patient metrics are stable. Proceed with standard protocol dosing (<b>1.5 mg/m², capped at 2.0 mg maximum</b>). Continue tracking serial neuromuscular variables at subsequent visits.</div>', unsafe_allow_html=True)
-
-# Historical Ledger Audit File Generator Download
-st.markdown("---")
-st.caption("Educational CDSS prototype powered by real-world FAERS/WHO multi-factorial baseline distribution data. Designed for low-resource precision neuro-oncology workflows.")
+# Compute Target Dose Adjustment based on CTCAE Grade and Hepatic Clearance profiles
+adjusted_dose = guideline_baseline_dose
