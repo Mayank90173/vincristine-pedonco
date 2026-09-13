@@ -8,7 +8,7 @@ from datetime import datetime
 # 1. PAGE ARCHITECTURE & CLINICAL INSTITUTIONAL THEME
 # ==============================================================================
 st.set_page_config(
-    page_title="VIPN Precision Protocol Command Center", 
+    page_title="VIPN Precision Command Dashboard", 
     page_icon="🧠", 
     layout="wide",
     initial_sidebar_state="expanded"
@@ -31,18 +31,18 @@ st.markdown('<p class="sub-title">Advanced Quantitative Pharmacology Decision Su
 st.markdown("---")
 
 # ==============================================================================
-# MEDICOLEGAL PROTECTION HUB (DR. MAYANK VIRMANI TRACK LOGIC)
+# MEDICOLEGAL PROTECTION HUB (DR. MAYANK VIRMANI CORE DECLARATION)
 # ==============================================================================
-st.markdown('<div class="medicolegal-banner">🛡️ <b>MEDICOLEGAL DISCLAIMER:</b> This prototype computational model layer is developed by Dr. Mayank Virmani strictly for educational advancement, baseline learning evaluation tracking, and research validation benchmarking in digital health systems. It does not constitute formal clinical medical advice or independent peer-reviewed dosing authorization. All treatment calibrations must be verified with active primary institutional oncology protocols.</div>', unsafe_allow_html=True)
+st.markdown('<div class="medicolegal-banner">🛡️ <b>MEDICOLEGAL DISCLAIMER & DIRECTIVE:</b> This computational pharmacology layer is engineered by <b>Dr. Mayank Virmani</b> strictly for educational advancement, baseline learning evaluation tracking, and research validation benchmarking in digital health health systems. It does not constitute formal personalized medical advice. All dosage modifications must be cross-verified against primary institutional clinical protocols.</div>', unsafe_allow_html=True)
 
 # ==============================================================================
-# 2. SIDEBAR DEMOGRAPHICS & CRITICAL HEPATIC/RENAL LAB PANELS
+# 2. SIDEBAR DEMOGRAPHICS & CRITICAL LAB PARAMETERS
 # ==============================================================================
 st.sidebar.markdown("### 🏥 Patient Demographics & Vitals")
 patient_id = st.sidebar.text_input("Patient Registry ID", value="PED-VIPN-2026")
-age = st.sidebar.slider("Age (Years)", min_value=1.0, max_value=18.0, value=6.5, step=0.1)
+age = st.sidebar.slider("Age (Years)", min_value=1.0, max_value=18.0, value=9.1, step=0.1)
 sex = st.sidebar.selectbox("Biological Sex", ["Male", "Female"])
-weight = st.sidebar.number_input("Weight (kg)", min_value=2.0, max_value=120.0, value=55.4, step=0.1)
+weight = st.sidebar.number_input("Weight (kg)", min_value=2.0, max_value=120.0, value=22.4, step=0.1)
 height = st.sidebar.number_input("Height (cm)", min_value=40.0, max_value=220.0, value=115.0, step=0.5)
 
 bsa_calc = math.sqrt((weight * height) / 3600.0)
@@ -51,7 +51,7 @@ st.sidebar.markdown("### 🧪 Organ Function Lab Metrics")
 scr = st.sidebar.number_input("Serum Creatinine (mg/dL)", min_value=0.1, max_value=5.0, value=0.45, step=0.01)
 alt = st.sidebar.number_input("ALT (SGPT) (U/L)", min_value=5, max_value=600, value=35, step=1)
 ast = st.sidebar.number_input("AST (SGOT) (U/L)", min_value=5, max_value=600, value=38, step=1)
-total_bilirubin = st.sidebar.number_input("Total Bilirubin (mg/dL)", min_value=0.1, max_value=15.0, value=0.6, step=0.1)
+total_bilirubin = st.sidebar.number_input("Total Bilirubin (mg/dL)", min_value=0.1, max_value=15.0, value=2.00, step=0.1)
 
 k_const = 0.70 if (sex == "Male" and age >= 13) else 0.55
 crcl_calc = (k_const * height) / scr
@@ -61,7 +61,7 @@ standard_calculated_dose = bsa_calc * 1.5
 guideline_baseline_dose = 2.0 if standard_calculated_dose > 2.0 else standard_calculated_dose
 
 # ==============================================================================
-# 3. MULTI-TIER MODALITY SELECTION WINDOW
+# 3. INTERACTIVE HORIZON LAYERS Selection
 # ==============================================================================
 tier_selection = st.radio(
     "📊 Select Clinical Modality / Economic Screening Horizon",
@@ -95,10 +95,10 @@ with col1:
         cyp_val = 1 if "Non-Expressor" in cyp3a5 else 0
         cep_val = 1 if "Homozygous Mutant" in cep72 else 0
         abcb1_val = 1 if "Mutant" in abcb1 else 0
-        clinical_notes_string = f"PGx -> CYP3A5: {cyp3a5} | CEP72: {cep72}"
+        clinical_notes_string = f"PGx Matrix -> CYP3A5: {cyp3a5} | CEP72: {cep72} | ABCB1: {abcb1}"
 
     st.markdown('<div class="section-header">💊 Treatment Protocol & DDI Sync</div>', unsafe_allow_html=True)
-    cumulative_vcr_dose = st.slider("Current Cumulative Vincristine Exposure (mg/m²)", min_value=2.0, max_value=50.0, value=12.0, step=0.5)
+    cumulative_vcr_dose = st.slider("Current Cumulative Vincristine Exposure (mg/m²)", min_value=2.0, max_value=50.0, value=23.5, step=0.5)
     azole_coadmin = st.selectbox("Concomitant Azole Antifungal Deployment", ["None / Safe Alternative", "Active Azole Exposure (Voriconazole, Itraconazole, Fluconazole)"])
     radiation_involved = st.checkbox("Concurrent Localized / Cranio-Spinal Radiation Protocol active")
     azole_val = 1 if "Active" in azole_coadmin else 0
@@ -109,21 +109,21 @@ with col1:
 # ==============================================================================
 with col2:
     st.markdown('<div class="section-header">📋 Current Active Symptoms Tracker (NCI-CTCAE v5.0)</div>', unsafe_allow_html=True)
-    s_paresthesia = st.checkbox("Paresthesia (Numbness, tingling, burning sensation in hands/feet)")
-    s_reflexes = st.checkbox("Hyporeflexia / Loss of deep tendon reflexes (Ankle jerk absent)")
-    s_footdrop = st.checkbox("Foot Drop / Altered motor gait velocity or dragging limbs")
-    s_neuralgia = st.checkbox("Severe Autonomic Neuralgia / Debilitating jaw or abdominal pain")
-    s_adl = st.selectbox("Impact on Daily Activities (ADL)", ["No Impact", "Minimal Impact (Can dress/feed self)", "Severe Impact (Assistance required for basic ADL)"])
+    s_paresthesia = st.checkbox("Paresthesia (Numbness, tingling, burning sensation in hands/feet)", value=True)
+    s_reflexes = st.checkbox("Hyporeflexia / Loss of deep tendon reflexes (Ankle jerk absent)", value=True)
+    s_footdrop = st.checkbox("Foot Drop / Altered motor gait velocity or dragging limbs", value=True)
+    s_neuralgia = st.checkbox("Severe Autonomic Neuralgia / Debilitating jaw or abdominal pain", value=True)
+    s_adl = st.selectbox("Impact on Daily Activities (ADL)", ["No Impact", "Minimal Impact (Can dress/feed self)", "Severe Impact (Assistance required for basic ADL)"], index=1)
 
     current_clinical_grade = 0
     if s_paresthesia or s_reflexes: current_clinical_grade = 1
     if s_neuralgia or (s_paresthesia and "Minimal" in s_adl): current_clinical_grade = 2
     if s_footdrop or "Severe" in s_adl: current_clinical_grade = 3
-
+    
     st.markdown(f'<div class="ctcae-box">📈 <b>Computed Severity Status:</b> CTCAE v5.0 Grade {current_clinical_grade} Peripheral Neuropathy</div>', unsafe_allow_html=True)
 
 # ==============================================================================
-# 5. ALGORITHMIC RISK PREDICTION MODEL ENGINE
+# 5. ALGORITHMIC RISK PREDICTION COMPILATION MODULE
 # ==============================================================================
 log_odds_calc = -3.5 + (0.08 * age) + (0.06 * cumulative_vcr_dose) + (2.3 * azole_val) + (1.9 * rt_val)
 
@@ -139,9 +139,8 @@ if total_bilirubin > 1.5: log_odds_calc += 2.5
 predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
 
 # ==============================================================================
-# 6. OUTPUT VALIDATION PANEL & DOSING ENGINE INTERFACE
+# 6. OUTPUT SCORECARD LEDGER PANEL INTERFACE
 # ==============================================================================
 st.markdown("---")
-st.subheader("📊 Model Output Scorecard")
-st.text(f"Calculated Patient BSA: {bsa_calc:.2f} m²")
-st.text(f"Calculated Kidney Function (CrCl): {crcl_calc:.1f} mL/min")
+res_col1, res_col2, res_col3, res_col4 = st.columns(4)
+with res_col1: st.metric(label="Calculated Patient BSA", value=f"{bsa_calc:.2f} m²")
