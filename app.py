@@ -135,7 +135,7 @@ if total_bilirubin > 1.5: log_odds_calc += 2.5
 predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
 
 # ==============================================================================
-# 6. OUTPUT SCORECARD LEDGER PANEL
+# 6. OUTPUT VALIDATION PANEL & DOSING ENGINE INTERFACE
 # ==============================================================================
 st.markdown("---")
 res_col1, res_col2, res_col3, res_col4 = st.columns(4)
@@ -150,7 +150,9 @@ with res_col4:
     st.metric(label="Guideline Baseline Dose", value=f"{guideline_baseline_dose:.2f} mg")
 
 # ==============================================================================
-# 7. LOGIC-LOCKED AMENDMENT ENGINE & FUTURE CLINICAL FORECASTS
+# 7. IMMEDIATE DOSAGE AMENDMENT ENGINE & FUTURE CLINICAL FORECASTS
 # ==============================================================================
-st.markdown('<div class="section-header">🩺 Immediate Dosage Amendment & Future Clinical Warnings</div>', unsafe_allow_html=True)
+st.markdown('### 🩺 Immediate Dosage Amendment & Future Clinical Warnings')
 
+adjusted_dose = guideline_baseline_dose
+action_protocol_string = ""
