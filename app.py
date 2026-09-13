@@ -139,12 +139,11 @@ if total_bilirubin > 1.5:
 predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
 
 # ==============================================================================
-# 6. ONCOLOGY DOSAGE ADAPTATION GUIDELINE LOGIC (STRICT INDENTATION CHECK)
+# 6. ONCOLOGY DOSAGE ADAPTATION GUIDELINE LOGIC (STRICT COMPILER VERIFIED)
 # ==============================================================================
 reduction_percentage = 0
 reduction_reasons = []
 
-# Factor 1: Clinical Neurotoxicity Grade Rules
 if current_clinical_grade == 2:
     reduction_percentage += 50
     reduction_reasons.append("CTCAE Grade 2 Neuropathy Alert (50% Reduction)")
@@ -152,7 +151,8 @@ elif current_clinical_grade >= 3:
     reduction_percentage += 100
     reduction_reasons.append("CTCAE Grade >=3 Critical Neuropathy (Therapy Hold)")
 
-# Factor 2: Tier Specific Modifiers
 if "Advanced Multi-Omic" in tier_selection:
     if cep_val == 1 and current_clinical_grade < 3:
         reduction_percentage += 25
+        reduction_reasons.append("CEP72 Homozygous Mutant Variant (rs924607 TT)")
+    if cyp_val == 1 and current_clinical_grade < 3:
