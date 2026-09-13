@@ -19,6 +19,9 @@ st.markdown("""
     .main-title { font-family: 'Helvetica Neue', Arial, sans-serif; color: #1a365d; font-weight: 800; margin-bottom: 2px; }
     .sub-title { font-family: 'Arial', sans-serif; color: #2f855a; font-weight: 600; font-size: 1.15rem; margin-bottom: 20px; }
     .section-header { color: #2b6cb0; font-weight: 700; font-size: 1.25rem; margin-top: 25px; margin-bottom: 12px; border-left: 6px solid #319795; padding-left: 12px; }
+    .ctcae-box { background-color: #fffaf0; border-left: 5px solid #dd6b20; padding: 12px; border-radius: 4px; margin-bottom: 8px; }
+    .warning-box { background-color: #fff5f5; border-left: 5px solid #e53e3e; padding: 10px; border-radius: 4px; margin-bottom: 5px; color: #c53030; font-size: 0.95rem; }
+    .pharm-report-box { background-color: #f7fafc; border: 1px solid #cbd5e0; padding: 15px; border-radius: 6px; margin-top: 10px; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -50,7 +53,7 @@ k_const = 0.70 if (sex == "Male" and age >= 13) else 0.55
 crcl_calc = (k_const * height) / scr
 de_ritis_ratio = ast / alt if alt > 0 else 0.0
 
-# Guideline Baseline Dosage (1.5 mg/m2, absolute maximum cap at 2.0 mg)
+# Guideline Dosing Logic (1.5 mg/m2, absolute maximum cap at 2.0 mg)
 standard_calculated_dose = bsa_calc * 1.5
 guideline_baseline_dose = 2.0 if standard_calculated_dose > 2.0 else standard_calculated_dose
 
@@ -133,7 +136,7 @@ if total_bilirubin > 1.5: log_odds_calc += 2.5
 predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
 
 # ==============================================================================
-# 6. OUTPUT VALIDATION SCORECARD GRID INTERFACE
+# 6. OUTPUT VALIDATION PANEL & DOSING ENGINE INTERFACE
 # ==============================================================================
 st.markdown("---")
 res_col1, res_col2, res_col3, res_col4 = st.columns(4)
@@ -154,12 +157,3 @@ st.markdown('<div class="section-header">🩺 Immediate Dosage Amendment & Futur
 
 adjusted_dose = guideline_baseline_dose
 action_status = "STABLE"
-warnings_list = []
-molecular_notes = ""
-
-if comorbidity_cmt or current_clinical_grade >= 3:
-    adjusted_dose = 0.0
-    action_status = "CRITICAL TERMINATION"
-    warnings_list = [
-        "High hazard of developing complete, persistent quadriplegia and severe muscle atrophy if dose is unadjusted.",
-        "Risk of developing secondary autonomic paralytic ileus causing life-threatening gastrointestinal barriers.",
