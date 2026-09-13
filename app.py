@@ -141,4 +141,3 @@ if total_bilirubin > 1.5: log_odds_calc += 2.5
 predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
 
 # ==============================================================================
-# 6. OUTPUT VALIDATION PANEL & DOSING ENGINE INTERFACE
