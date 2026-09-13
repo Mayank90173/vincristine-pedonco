@@ -8,7 +8,7 @@ from datetime import datetime
 # 1. PAGE ARCHITECTURE & CLINICAL INSTITUTIONAL THEME
 # ==============================================================================
 st.set_page_config(
-    page_title="VIPN Precision Protocol Command Center", 
+    page_title="VIPN Precision Command Dashboard", 
     page_icon="🧠", 
     layout="wide",
     initial_sidebar_state="expanded"
@@ -31,9 +31,9 @@ st.markdown('<p class="sub-title">Advanced Quantitative Pharmacology Decision Su
 st.markdown("---")
 
 # ==============================================================================
-# MEDICOLEGAL PROTECTION HUB (DR. MAYANK VIANI TRACK LOGIC)
+# MEDICOLEGAL PROTECTION HUB (DR. MAYANK VIRMANI TRACK LOGIC)
 # ==============================================================================
-st.markdown('<div class="medicolegal-banner">🛡️ <b>MEDICOLEGAL DISCLAIMER:</b> This prototype computational model layer is developed by Dr. Mayank Viani strictly for educational advancement, baseline learning evaluation tracking, and research validation benchmarking in digital health health systems. It does not constitute formal clinical medical advice or independent peer-reviewed dosing authorization. All treatment calibrations must be verified with active primary institutional oncology protocols.</div>', unsafe_allow_html=True)
+st.markdown('<div class="medicolegal-banner">🛡️ <b>MEDICOLEGAL DISCLAIMER:</b> This prototype computational model layer is developed by Dr. Mayank Virmani strictly for educational advancement, baseline learning evaluation tracking, and research validation benchmarking in digital health health systems. It does not constitute formal clinical medical advice or independent peer-reviewed dosing authorization. All treatment calibrations must be verified with active primary institutional oncology protocols.</div>', unsafe_allow_html=True)
 
 # ==============================================================================
 # 2. SIDEBAR DEMOGRAPHICS & CRITICAL HEPATIC/RENAL LAB PANELS
@@ -45,7 +45,6 @@ sex = st.sidebar.selectbox("Biological Sex", ["Male", "Female"])
 weight = st.sidebar.number_input("Weight (kg)", min_value=2.0, max_value=120.0, value=22.4, step=0.1)
 height = st.sidebar.number_input("Height (cm)", min_value=40.0, max_value=220.0, value=115.0, step=0.5)
 
-# Calculate BSA using Mosteller Formula
 bsa_calc = math.sqrt((weight * height) / 3600.0)
 
 st.sidebar.markdown("### 🧪 Organ Function Lab Metrics")
@@ -54,12 +53,10 @@ alt = st.sidebar.number_input("ALT (SGPT) (U/L)", min_value=5, max_value=600, va
 ast = st.sidebar.number_input("AST (SGOT) (U/L)", min_value=5, max_value=600, value=38, step=1)
 total_bilirubin = st.sidebar.number_input("Total Bilirubin (mg/dL)", min_value=0.1, max_value=15.0, value=0.6, step=0.1)
 
-# Schwartz Formula for Pediatric CrCl
 k_const = 0.70 if (sex == "Male" and age >= 13) else 0.55
 crcl_calc = (k_const * height) / scr
 de_ritis_ratio = ast / alt if alt > 0 else 0.0
 
-# Guideline Dosing Logic (1.5 mg/m2, absolute maximum cap at 2.0 mg)
 standard_calculated_dose = bsa_calc * 1.5
 guideline_baseline_dose = 2.0 if standard_calculated_dose > 2.0 else standard_calculated_dose
 
@@ -88,7 +85,7 @@ with col1:
         
         b12_val = 1 if "Severe" in vit_b12_status or "Strict Vegan" in dietary_regimen else 0
         malnutrition_val = 1 if "Severe Acute" in malnutrition_profile else 0
-        clinical_notes_string = f"Dietary Matrix: {dietary_regimen} | B12: {vit_b12_status}"
+        clinical_notes_string = f"Dietary Matrix: {dietary_regimen} | B12 Status: {vit_b12_status}"
     else:
         st.markdown('<div class="section-header">🧬 High-End Pharmacogenomic (PGx) Variant Matrix</div>', unsafe_allow_html=True)
         cyp3a5 = st.selectbox("CYP3A5 Genotype Status (Clearance Kinetics)", ["Expressor (*1/*1 or *1/*3) - Normal", "Non-Expressor (*3/*3) - Severe Clearance Delay"])
@@ -147,3 +144,6 @@ predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
 st.markdown("---")
 res_col1, res_col2, res_col3, res_col4 = st.columns(4)
 
+with res_col1:
+    st.metric(label="Calculated Patient BSA", value=f"{bsa_calc:.2f} m²")
+with res_col2:
