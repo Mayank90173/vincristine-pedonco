@@ -5,10 +5,10 @@ import numpy as np
 from datetime import datetime
 
 # ==============================================================================
-# 1. PAGE ARCHITECTURE & CLINICAL STYLING CONFIGURATION
+# 1. PAGE ARCHITECTURE & CLINICAL INSTITUTIONAL THEME
 # ==============================================================================
 st.set_page_config(
-    page_title="VIPN Precision Command Dashboard", 
+    page_title="VIPN Precision Protocol Command Center", 
     page_icon="🧠", 
     layout="wide",
     initial_sidebar_state="expanded"
@@ -19,52 +19,43 @@ st.markdown("""
     .main-title { font-family: 'Helvetica Neue', Arial, sans-serif; color: #1a365d; font-weight: 800; margin-bottom: 2px; }
     .sub-title { font-family: 'Arial', sans-serif; color: #2f855a; font-weight: 600; font-size: 1.15rem; margin-bottom: 20px; }
     .section-header { color: #2b6cb0; font-weight: 700; font-size: 1.25rem; margin-top: 25px; margin-bottom: 12px; border-left: 6px solid #319795; padding-left: 12px; }
-    .protocol-card { background-color: #ebf8ff; border-top: 4px solid #3182ce; padding: 20px; border-radius: 6px; margin-top: 15px; margin-bottom: 15px; }
-    .ctcae-box { background-color: #fffaf0; border-left: 5px solid #dd6b20; padding: 12px; border-radius: 4px; margin-bottom: 8px; }
-    .warning-box { background-color: #fff5f5; border-left: 5px solid #e53e3e; padding: 10px; border-radius: 4px; margin-bottom: 5px; color: #c53030; font-size: 0.95rem; }
-    .pharm-report-box { background-color: #f7fafc; border: 1px solid #cbd5e0; padding: 15px; border-radius: 6px; margin-top: 10px; }
-    
-    /* Interactive HTML Cellular Axon Styles */
-    .axon-container { background-color: #f8fafc; border: 2px solid #e2e8f0; padding: 20px; border-radius: 8px; text-align: center; margin-top: 15px; }
-    .axon-membrane { border-top: 3px dashed #718096; border-bottom: 3px dashed #718096; padding: 30px 10px; margin: 20px 0; background: linear-gradient(180deg, #edf2f7 0%, #ffffff 50%, #edf2f7 100%); position: relative; }
-    .tubulin-strand { font-weight: bold; color: #319795; font-size: 1.2rem; letter-spacing: 4px; display: inline-block; }
-    .vcr-molecule { background-color: #e53e3e; color: white; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; display: inline-block; margin: 0 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .variant-alert-box { background-color: #feebc8; border: 1px solid #fbd38d; color: #dd6b20; padding: 10px; border-radius: 4px; font-size: 0.9rem; margin-top: 10px; font-weight: 600; }
     </style>
 """, unsafe_allow_html=True)
 
 st.markdown('<h1 class="main-title">🧠 Pediatric VIPN Clinical Intelligence Command Center</h1>', unsafe_allow_html=True)
-st.markdown('<p class="sub-title">Computational Decision Support System (CDSS) Powered by an Embedded 1,000-Patient Precision Oncology Model Layer</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-title">Advanced Quantitative Pharmacology Decision Support Engine for Low-Resource Bedside vs High-End Precision Neuro-Oncology</p>', unsafe_allow_html=True)
 st.markdown("---")
 
 # ==============================================================================
-# 2. SIDEBAR DEMOGRAPHICS & CRITICAL HEPATIC/RENAL TOXICITY PANEL
+# 2. SIDEBAR DEMOGRAPHICS & CRITICAL HEPATIC/RENAL LAB PANELS
 # ==============================================================================
-st.sidebar.markdown("### 🏥 Patient Demographics & Baseline Vitals")
+st.sidebar.markdown("### 🏥 Patient Demographics & Vitals")
 patient_id = st.sidebar.text_input("Patient Registry ID", value="PED-VIPN-2026")
 age = st.sidebar.slider("Age (Years)", min_value=1.0, max_value=18.0, value=6.5, step=0.1)
 sex = st.sidebar.selectbox("Biological Sex", ["Male", "Female"])
 weight = st.sidebar.number_input("Weight (kg)", min_value=2.0, max_value=120.0, value=22.4, step=0.1)
 height = st.sidebar.number_input("Height (cm)", min_value=40.0, max_value=220.0, value=115.0, step=0.5)
 
-# BSA Calculation
+# Calculate BSA using Mosteller Formula
 bsa_calc = math.sqrt((weight * height) / 3600.0)
 
-st.sidebar.markdown("### 🧪 Organ Toxicity Function Panel")
+st.sidebar.markdown("### 🧪 Organ Function Lab Metrics")
 scr = st.sidebar.number_input("Serum Creatinine (mg/dL)", min_value=0.1, max_value=5.0, value=0.45, step=0.01)
 alt = st.sidebar.number_input("ALT (SGPT) (U/L)", min_value=5, max_value=600, value=35, step=1)
 ast = st.sidebar.number_input("AST (SGOT) (U/L)", min_value=5, max_value=600, value=38, step=1)
 total_bilirubin = st.sidebar.number_input("Total Bilirubin (mg/dL)", min_value=0.1, max_value=15.0, value=0.6, step=0.1)
 
+# Schwartz Formula for Pediatric CrCl
 k_const = 0.70 if (sex == "Male" and age >= 13) else 0.55
 crcl_calc = (k_const * height) / scr
 de_ritis_ratio = ast / alt if alt > 0 else 0.0
 
+# Guideline Baseline Dosage (1.5 mg/m2, absolute maximum cap at 2.0 mg)
 standard_calculated_dose = bsa_calc * 1.5
 guideline_baseline_dose = 2.0 if standard_calculated_dose > 2.0 else standard_calculated_dose
 
 # ==============================================================================
-# 3. INTERACTIVE CHANNELS (LOW-RESOURCE VS HIGH-END TARGET LAYERS)
+# 3. MULTI-TIER MODALITY SELECTION WINDOW
 # ==============================================================================
 tier_selection = st.radio(
     "📊 Select Clinical Modality / Economic Screening Horizon",
@@ -88,7 +79,7 @@ with col1:
         
         b12_val = 1 if "Severe" in vit_b12_status or "Strict Vegan" in dietary_regimen else 0
         malnutrition_val = 1 if "Severe Acute" in malnutrition_profile else 0
-        clinical_notes_string = f"Dietary Matrix: {dietary_regimen} | B12 Status: {vit_b12_status} | Nutrition Profile: {malnutrition_profile}"
+        clinical_notes_string = f"Dietary: {dietary_regimen} | B12: {vit_b12_status} | Nutrition: {malnutrition_profile}"
     else:
         st.markdown('<div class="section-header">🧬 High-End Pharmacogenomic (PGx) Variant Matrix</div>', unsafe_allow_html=True)
         cyp3a5 = st.selectbox("CYP3A5 Genotype Status (Clearance Kinetics)", ["Expressor (*1/*1 or *1/*3) - Normal", "Non-Expressor (*3/*3) - Severe Clearance Delay"])
@@ -98,7 +89,7 @@ with col1:
         cyp_val = 1 if "Non-Expressor" in cyp3a5 else 0
         cep_val = 1 if "Homozygous Mutant" in cep72 else 0
         abcb1_val = 1 if "Mutant" in abcb1 else 0
-        clinical_notes_string = f"PGx Matrix -> CYP3A5: {cyp3a5} | CEP72: {cep72} | ABCB1 Transporter: {abcb1}"
+        clinical_notes_string = f"PGx -> CYP3A5: {cyp3a5} | CEP72: {cep72} | ABCB1: {abcb1}"
 
     st.markdown('<div class="section-header">💊 Treatment Protocol & DDI Sync</div>', unsafe_allow_html=True)
     cumulative_vcr_dose = st.slider("Current Cumulative Vincristine Exposure (mg/m²)", min_value=2.0, max_value=50.0, value=12.0, step=0.5)
@@ -123,10 +114,10 @@ with col2:
     if s_neuralgia or (s_paresthesia and "Minimal" in s_adl): current_clinical_grade = 2
     if s_footdrop or "Severe" in s_adl: current_clinical_grade = 3
     
-    st.markdown(f'<div class="ctcae-box">📈 <b>Computed Severity Status:</b> CTCAE v5.0 Grade {current_clinical_grade} Peripheral Motor/Sensory Neuropathy</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="ctcae-box">📈 <b>Computed Severity Status:</b> CTCAE v5.0 Grade {current_clinical_grade} Peripheral Neuropathy</div>', unsafe_allow_html=True)
 
 # ==============================================================================
-# 5. ALGORITHMIC RISK PREDICTION ENGINE (LOG-ODDS COEFFICIENTS MATRIX)
+# 5. ALGORITHMIC RISK PREDICTION MODEL ENGINE
 # ==============================================================================
 log_odds_calc = -3.5 + (0.08 * age) + (0.06 * cumulative_vcr_dose) + (2.3 * azole_val) + (1.9 * rt_val)
 
@@ -142,3 +133,33 @@ if total_bilirubin > 1.5: log_odds_calc += 2.5
 predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
 
 # ==============================================================================
+# 6. OUTPUT VALIDATION SCORECARD GRID INTERFACE
+# ==============================================================================
+st.markdown("---")
+res_col1, res_col2, res_col3, res_col4 = st.columns(4)
+
+with res_col1:
+    st.metric(label="Calculated Patient BSA", value=f"{bsa_calc:.2f} m²")
+with res_col2:
+    st.metric(label="Calculated Kidney Function (CrCl)", value=f"{crcl_calc:.1f} mL/min")
+with res_col3:
+    st.metric(label="Model-Driven VIPN Risk Probability", value=f"{predicted_toxicity_probability:.1f} %")
+with res_col4:
+    st.metric(label="Standard Protocol Baseline Dose", value=f"{guideline_baseline_dose:.2f} mg")
+
+# ==============================================================================
+# 7. NATIVE BULLETPROOF DOSAGE AMENDMENT ENGINE & FUTURE CLINICAL FORECASTS
+# ==============================================================================
+st.markdown('<div class="section-header">🩺 Immediate Dosage Amendment & Future Clinical Warnings</div>', unsafe_allow_html=True)
+
+adjusted_dose = guideline_baseline_dose
+action_status = "STABLE"
+warnings_list = []
+molecular_notes = ""
+
+if comorbidity_cmt or current_clinical_grade >= 3:
+    adjusted_dose = 0.0
+    action_status = "CRITICAL TERMINATION"
+    warnings_list = [
+        "High hazard of developing complete, persistent quadriplegia and severe muscle atrophy if dose is unadjusted.",
+        "Risk of developing secondary autonomic paralytic ileus causing life-threatening gastrointestinal barriers.",
