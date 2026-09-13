@@ -3,7 +3,6 @@ import math
 import pandas as pd
 import numpy as np
 from datetime import datetime
-import io
 
 # ==============================================================================
 # 1. PAGE ARCHITECTURE & CLINICAL INSTITUTIONAL THEME
@@ -72,6 +71,7 @@ tier_selection = st.radio(
 
 cyp_val, cep_val, abcb1_val, b12_val, malnutrition_val = 0, 0, 0, 0, 0
 comorbidity_cmt = False
+clinical_notes_string = ""
 
 if "Low-Resource" in tier_selection:
     st.markdown('<div class="section-header">🥦 Diet, Nutrition & Comorbidity Phenotyping</div>', unsafe_allow_html=True)
@@ -82,6 +82,7 @@ if "Low-Resource" in tier_selection:
     
     b12_val = 1 if "Severe" in vit_b12_status or "Strict Vegan" in dietary_regimen else 0
     malnutrition_val = 1 if "Severe Acute" in malnutrition_profile else 0
+    clinical_notes_string = f"Dietary Matrix: {dietary_regimen} | B12 Status: {vit_b12_status}"
 else:
     st.markdown('<div class="section-header">🧬 High-End Pharmacogenomic (PGx) Variant Matrix</div>', unsafe_allow_html=True)
     cyp3a5 = st.selectbox("CYP3A5 Genotype Status (Clearance Kinetics)", ["Expressor (*1/*1 or *1/*3) - Normal", "Non-Expressor (*3/*3) - Severe Clearance Delay"])
@@ -91,6 +92,7 @@ else:
     cyp_val = 1 if "Non-Expressor" in cyp3a5 else 0
     cep_val = 1 if "Homozygous Mutant" in cep72 else 0
     abcb1_val = 1 if "Mutant" in abcb1 else 0
+    clinical_notes_string = f"PGx -> CYP3A5: {cyp3a5} | CEP72: {cep72}"
 
 st.markdown('<div class="section-header">💊 Treatment Protocol & DDI Sync</div>', unsafe_allow_html=True)
 cumulative_vcr_dose = st.slider("Current Cumulative Vincristine Exposure (mg/m²)", min_value=2.0, max_value=50.0, value=12.0, step=0.5)
@@ -110,12 +112,9 @@ s_neuralgia = st.checkbox("Severe Autonomic Neuralgia / Debilitating jaw or abdo
 s_adl = st.selectbox("Impact on Daily Activities (ADL)", ["No Impact", "Minimal Impact (Can dress/feed self)", "Severe Impact (Assistance required for basic ADL)"])
 
 current_clinical_grade = 0
-if s_paresthesia or s_reflexes: 
-    current_clinical_grade = 1
-if s_neuralgia or (s_paresthesia and "Minimal" in s_adl): 
-    current_clinical_grade = 2
-if s_footdrop or "Severe" in s_adl: 
-    current_clinical_grade = 3
+if s_paresthesia or s_reflexes: current_clinical_grade = 1
+if s_neuralgia or (s_paresthesia and "Minimal" in s_adl): current_clinical_grade = 2
+if s_footdrop or "Severe" in s_adl: current_clinical_grade = 3
 
 st.markdown(f'<div class="ctcae-box">📈 <b>Computed Severity Status:</b> CTCAE v5.0 Grade {current_clinical_grade} Peripheral Neuropathy</div>', unsafe_allow_html=True)
 
@@ -129,31 +128,19 @@ if "Low-Resource" in tier_selection:
 else:
     log_odds_calc += (1.4 * cyp_val) + (2.8 * cep_val) + (1.8 * abcb1_val)
 
-if comorbidity_cmt: 
-    log_odds_calc += 5.0
-if alt > 120 or ast > 120: 
-    log_odds_calc += 2.2
-if total_bilirubin > 1.5: 
-    log_odds_calc += 2.5
+if comorbidity_cmt: log_odds_calc += 5.0
+if alt > 120 or ast > 120: log_odds_calc += 2.2
+if total_bilirubin > 1.5: log_odds_calc += 2.5
 
 predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
 
 # ==============================================================================
-# 6. ONCOLOGY DOSAGE ADAPTATION GUIDELINE LOGIC
+# 6. OUTPUT VALIDATION PANEL & DOSING ENGINE INTERFACE
 # ==============================================================================
-reduction_percentage = 0
-reduction_reasons = []
+st.markdown("---")
+st.subheader("📊 Model Output Scorecard")
+st.text(f"Calculated Patient BSA: {bsa_calc:.2f} m²")
+st.text(f"Calculated Kidney Function (CrCl): {crcl_calc:.1f} mL/min")
+st.text(f"Model-Driven VIPN Risk Probability: {predicted_toxicity_probability:.1f} %")
+st.text(f"Standard Protocol Baseline Dose (Guideline Cap Applied): {guideline_baseline_dose:.2f} mg")
 
-if current_clinical_grade == 2:
-    reduction_percentage += 50
-    reduction_reasons.append("CTCAE Grade 2 Neuropathy Alert (50% Reduction)")
-elif current_clinical_grade >= 3:
-    reduction_percentage += 100
-    reduction_reasons.append("CTCAE Grade >=3 Critical Neuropathy (Therapy Hold)")
-
-if "Advanced Multi-Omic" in tier_selection:
-    if cep_val == 1 and current_clinical_grade < 3:
-        reduction_percentage += 25
-        reduction_reasons.append("CEP72 Homozygous Mutant Variant (rs924607 TT)")
-    if cyp_val == 1 and current_clinical_grade < 3:
-        reduction_percentage += 25
