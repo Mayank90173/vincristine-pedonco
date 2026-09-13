@@ -4,10 +4,6 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 import io
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib import colors
 
 # ==============================================================================
 # 1. PAGE ARCHITECTURE & CLINICAL INSTITUTIONAL THEME
@@ -62,7 +58,6 @@ k_const = 0.70 if (sex == "Male" and age >= 13) else 0.55
 crcl_calc = (k_const * height) / scr
 de_ritis_ratio = ast / alt if alt > 0 else 0.0
 
-# Guideline base calculation (Standard Vincristine dose is 1.5 mg/m2, capped at 2.0 mg)
 standard_calculated_dose = bsa_calc * 1.5
 guideline_baseline_dose = 2.0 if standard_calculated_dose > 2.0 else standard_calculated_dose
 
@@ -146,6 +141,12 @@ predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
 reduction_percentage = 0
 reduction_reasons = []
 
-# CTCAE Grade Modifications
 if current_clinical_grade == 2:
     reduction_percentage += 50
+    reduction_reasons.append("CTCAE Grade 2 Neuropathy detected (50% reduction required)")
+elif current_clinical_grade >= 3:
+    reduction_percentage += 100
+    reduction_reasons.append("CTCAE Grade >=3 Neuropathy detected (Hold therapy completely)")
+
+if total_bilirubin > 1.5 and total_bilirubin <= 3.0:
+    if reduction_percentage < 50:
