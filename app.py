@@ -5,10 +5,10 @@ import numpy as np
 from datetime import datetime
 
 # ==============================================================================
-# 1. PAGE CONFIGURATION & MEDICAL INSTITUTIONAL THEME
+# 1. PAGE ARCHITECTURE & MEDICAL INSTITUTIONAL THEME
 # ==============================================================================
 st.set_page_config(
-    page_title="VIPN Precision Intelligence Center", 
+    page_title="VIPN Precision Command Dashboard", 
     page_icon="🧠", 
     layout="wide",
     initial_sidebar_state="expanded"
@@ -21,7 +21,7 @@ st.markdown("""
     .section-header { color: #2b6cb0; font-weight: 700; font-size: 1.25rem; margin-top: 25px; margin-bottom: 12px; border-left: 6px solid #319795; padding-left: 12px; }
     .protocol-card { background-color: #ebf8ff; border-top: 4px solid #3182ce; padding: 20px; border-radius: 6px; margin-top: 15px; margin-bottom: 15px; }
     .ctcae-box { background-color: #fffaf0; border-left: 5px solid #dd6b20; padding: 12px; border-radius: 4px; margin-bottom: 8px; }
-    .warning-box { background-color: #fff5f5; border-left: 5px solid #e53e3e; padding: 10px; border-radius: 4px; margin-bottom: 5px; color: #c53030; }
+    .warning-box { background-color: #fff5f5; border-left: 5px solid #e53e3e; padding: 10px; border-radius: 4px; margin-bottom: 5px; color: #c53030; font-size: 0.95rem; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -30,7 +30,7 @@ st.markdown('<p class="sub-title">Advanced Multimodal Decision Support Engine fo
 st.markdown("---")
 
 # ==============================================================================
-# 2. SIDEBAR CONFIGURATION: DEMOGRAPHICS & CRITICAL ORGAN FUNCTION LABS
+# 2. SIDEBAR DEMOGRAPHICS & CRITICAL HEPATIC/RENAL TOXICITY PANEL
 # ==============================================================================
 st.sidebar.markdown("### 🏥 Patient Demographics & Baseline Vitals")
 patient_id = st.sidebar.text_input("Patient Registry ID", value="PED-VIPN-2026")
@@ -54,7 +54,7 @@ standard_calculated_dose = bsa * 1.5
 guideline_baseline_dose = 2.0 if standard_calculated_dose > 2.0 else standard_calculated_dose
 
 # ==============================================================================
-# 3. INTERACTIVE CHANNELS (LOW-RESOURCE VS HIGH-END PRECISION MODALITIES)
+# 3. INTERACTIVE CHANNELS (GAREEB VS HIGH-END PRECISION LAYERS)
 # ==============================================================================
 tier_selection = st.radio(
     "📊 Select Clinical Modality / Economic Screening Horizon",
@@ -64,11 +64,9 @@ tier_selection = st.radio(
 
 col1, col2 = st.columns(2)
 
-# Dynamic Variable Defaults Initialization to prevent mathematical compilation leaks
 cyp_val, cep_val, abcb1_val, b12_val, malnutrition_val = 0, 0, 0, 0, 0
 comorbidity_cmt = False
-dietary_regimen, vit_b12_status, malnutrition_profile = "N/A", "N/A", "N/A"
-cyp3a5, cep72, abcb1 = "N/A", "N/A", "N/A"
+clinical_notes_string = ""
 
 with col1:
     if "Low-Resource" in tier_selection:
@@ -80,6 +78,7 @@ with col1:
         
         b12_val = 1 if "Severe" in vit_b12_status or "Strict Vegan" in dietary_regimen else 0
         malnutrition_val = 1 if "Severe Acute" in malnutrition_profile else 0
+        clinical_notes_string = f"Dietary Matrix: {dietary_regimen} | B12 Status: {vit_b12_status} | Nutrition Profile: {malnutrition_profile}"
     else:
         st.markdown('<div class="section-header">🧬 High-End Pharmacogenomic (PGx) Variant Matrix</div>', unsafe_allow_html=True)
         cyp3a5 = st.selectbox("CYP3A5 Genotype Status (Clearance Kinetics)", ["Expressor (*1/*1 or *1/*3) - Normal", "Non-Expressor (*3/*3) - Severe Clearance Delay"])
@@ -89,6 +88,7 @@ with col1:
         cyp_val = 1 if "Non-Expressor" in cyp3a5 else 0
         cep_val = 1 if "Homozygous Mutant" in cep72 else 0
         abcb1_val = 1 if "Mutant" in abcb1 else 0
+        clinical_notes_string = f"PGx Matrix -> CYP3A5: {cyp3a5} | CEP72: {cep72} | ABCB1 Transporter: {abcb1}"
 
     st.markdown('<div class="section-header">💊 Treatment Protocol & DDI Sync</div>', unsafe_allow_html=True)
     cumulative_vcr_dose = st.slider("Current Cumulative Vincristine Exposure (mg/m²)", min_value=2.0, max_value=50.0, value=12.0, step=0.5)
@@ -116,7 +116,7 @@ with col2:
     st.markdown(f'<div class="ctcae-box">📈 <b>Computed Severity Status:</b> CTCAE v5.0 Grade {current_clinical_grade} Peripheral Motor/Sensory Neuropathy</div>', unsafe_allow_html=True)
 
 # ==============================================================================
-# 5. MULTI-TIER PREDICTIVE ALGORITHMIC RISK COMPILATION ENGINE
+# 5. ALGORITHMIC RISK PREDICTION ENGINE
 # ==============================================================================
 log_odds_base = -3.5 + (0.08 * age) + (0.06 * cumulative_vcr_dose) + (2.3 * azole_val) + (1.9 * rt_val)
 
@@ -125,7 +125,6 @@ if "Low-Resource" in tier_selection:
 else:
     log_odds_calc = log_odds_base + (1.4 * cyp_val) + (2.8 * cep_val) + (1.8 * abcb1_val)
 
-# Clinical parameters heavy weight overrides
 if comorbidity_cmt: log_odds_calc += 5.0
 if alt > 120 or ast > 120: log_odds_calc += 2.2
 if total_bilirubin > 1.5: log_odds_calc += 2.5
@@ -133,22 +132,22 @@ if total_bilirubin > 1.5: log_odds_calc += 2.5
 predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
 
 # ==============================================================================
-# 6. PLATFORM SCORECARD SPLIT RENDERING
+# 6. OUTPUT SCORECARD LEDGER PANEL
 # ==============================================================================
 st.markdown("---")
 res_col1, res_col2, res_col3, res_col4 = st.columns(4)
 
 with res_col1:
-    st.metric(label="Calculated BSA", value=f"{bsa:.2f} m²")
+    st.metric(label="Calculated Patient BSA", value=f"{bsa:.2f} m²")
 with res_col2:
-    st.metric(label="Calculated Kidney (CrCl)", value=f"{crcl:.1f} mL/min")
+    st.metric(label="Calculated Kidney Function (CrCl)", value=f"{crcl:.1f} mL/min")
 with res_col3:
-    st.metric(label="Model VIPN Risk Probability", value=f"{predicted_toxicity_probability:.1f} %")
+    st.metric(label="Model-Driven VIPN Risk Probability", value=f"{predicted_toxicity_probability:.1f} %")
 with res_col4:
-    st.metric(label="Standard Protocol Target Dose", value=f"{guideline_baseline_dose:.2f} mg")
+    st.metric(label="Guideline Baseline Dose", value=f"{guideline_baseline_dose:.2f} mg")
 
 # ==============================================================================
-# 7. LOGIC-LOCKED ENGINE: IMMEDIATE DOSAGE AMENDMENT & CRITICAL FORECASTS
+# 7. LOGIC-LOCKED AMENDMENT ENGINE & FUTURE CLINICAL FORECASTS
 # ==============================================================================
 st.markdown('<div class="section-header">🩺 Immediate Dosage Amendment & Future Clinical Warnings</div>', unsafe_allow_html=True)
 
@@ -156,6 +155,5 @@ adjusted_dose = guideline_baseline_dose
 action_protocol_string = ""
 future_warnings_list = []
 
-# Core Decision Logic Rules
 if comorbidity_cmt or current_clinical_grade >= 3:
     adjusted_dose = 0.0
