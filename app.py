@@ -142,15 +142,14 @@ if total_bilirubin > 1.5:
 predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
 
 # ==============================================================================
-# 6. ONCOLOGY DOSAGE ADAPTATION GUIDELINE LOGIC
+# 6. ONCOLOGY DOSAGE ADAPTATION GUIDELINE LOGIC (FIXED PGx CALIBRATION)
 # ==============================================================================
 reduction_percentage = 0
 reduction_reasons = []
 
+# Clinical CTCAE Grading Logic
 if current_clinical_grade == 2:
     reduction_percentage += 50
-    reduction_reasons.append("CTCAE Grade 2 Neuropathy detected (50% reduction required)")
+    reduction_reasons.append("CTCAE Grade 2 Neuropathy detected")
 elif current_clinical_grade >= 3:
     reduction_percentage += 100
-    reduction_reasons.append("CTCAE Grade >=3 Neuropathy detected (Hold therapy completely)")
-
