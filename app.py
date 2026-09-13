@@ -3,6 +3,11 @@ import math
 import pandas as pd
 import numpy as np
 from datetime import datetime
+import io
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
 
 # ==============================================================================
 # 1. PAGE ARCHITECTURE & CLINICAL INSTITUTIONAL THEME
@@ -57,6 +62,7 @@ k_const = 0.70 if (sex == "Male" and age >= 13) else 0.55
 crcl_calc = (k_const * height) / scr
 de_ritis_ratio = ast / alt if alt > 0 else 0.0
 
+# Guideline base calculation (Standard Vincristine dose is 1.5 mg/m2, capped at 2.0 mg)
 standard_calculated_dose = bsa_calc * 1.5
 guideline_baseline_dose = 2.0 if standard_calculated_dose > 2.0 else standard_calculated_dose
 
@@ -135,12 +141,11 @@ if total_bilirubin > 1.5: log_odds_calc += 2.5
 predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
 
 # ==============================================================================
-# 6. OUTPUT VALIDATION PANEL & DOSING ENGINE INTERFACE
+# 6. ONCOLOGY DOSAGE ADAPTATION GUIDELINE LOGIC
 # ==============================================================================
-st.markdown("---")
-st.subheader("📊 Model Output Scorecard")
-st.text(f"Calculated Patient BSA: {bsa_calc:.2f} m²")
-st.text(f"Calculated Kidney Function (CrCl): {crcl_calc:.1f} mL/min")
-st.text(f"Model-Driven VIPN Risk Probability: {predicted_toxicity_probability:.1f} %")
-st.text(f"Standard Protocol Baseline Dose: {guideline_baseline_dose:.2f} mg")
+reduction_percentage = 0
+reduction_reasons = []
 
+# CTCAE Grade Modifications
+if current_clinical_grade == 2:
+    reduction_percentage += 50
