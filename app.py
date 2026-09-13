@@ -43,7 +43,7 @@ st.sidebar.markdown("### 🏥 Patient Demographics & Vitals")
 patient_id = st.sidebar.text_input("Patient Registry ID", value="PED-VIPN-2026")
 age = st.sidebar.slider("Age (Years)", min_value=1.0, max_value=18.0, value=6.5, step=0.1)
 sex = st.sidebar.selectbox("Biological Sex", ["Male", "Female"])
-weight = st.sidebar.number_input("Weight (kg)", min_value=2.0, max_value=120.0, value=22.4, step=0.1)
+weight = st.sidebar.number_input("Weight (kg)", min_value=2.0, max_value=120.0, value=55.4, step=0.1)
 height = st.sidebar.number_input("Height (cm)", min_value=40.0, max_value=220.0, value=115.0, step=0.5)
 
 bsa_calc = math.sqrt((weight * height) / 3600.0)
@@ -139,7 +139,7 @@ if total_bilirubin > 1.5:
 predicted_toxicity_probability = (1 / (1 + np.exp(-log_odds_calc))) * 100
 
 # ==============================================================================
-# 6. ONCOLOGY DOSAGE ADAPTATION GUIDELINE LOGIC (STRICT COMPILER VERIFIED)
+# 6. ONCOLOGY DOSAGE ADAPTATION GUIDELINE LOGIC
 # ==============================================================================
 reduction_percentage = 0
 reduction_reasons = []
@@ -156,3 +156,4 @@ if "Advanced Multi-Omic" in tier_selection:
         reduction_percentage += 25
         reduction_reasons.append("CEP72 Homozygous Mutant Variant (rs924607 TT)")
     if cyp_val == 1 and current_clinical_grade < 3:
+        reduction_percentage += 25
