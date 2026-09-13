@@ -3,9 +3,4 @@ pandas
 numpy
 joblib
 reportlab
-scikit-learnstreamlit
-pandas
-numpy
-reportlab
-
-
+scikit-learn
